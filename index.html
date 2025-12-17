@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LANEDU Labs - Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="login-screen" class="overlay">
+    <div class="login-card">
+      <h1>LANEDU Labs</h1>
+      <p class="subtitle">Conecta tu cuenta de GitHub para validar Labs con Pull Requests.</p>
+      <form id="login-form">
+        <label for="github-token">Token personal o OAuth de GitHub</label>
+        <input
+          type="password"
+          id="github-token"
+          name="github-token"
+          placeholder="ghp_xxxxx"
+          required
+        />
+        <button type="submit">Conectar con GitHub</button>
+      </form>
+      <p class="hint">No almacenamos tu código. Solo se usa para leer PRs y tu usuario.</p>
+      <p class="mini-hint">Genera un token con permisos de lectura en repos públicos.</p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="logo">⚡ LANEDU Labs</div>
+    <div class="player-info">
+      <span id="player-name">Jugador</span>
+      <span class="badge" id="player-level">Nivel 1</span>
+      <button id="logout-btn" class="ghost">Salir</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel routes">
+      <div class="panel-header">
+        <h2>Rutas de aprendizaje</h2>
+        <span class="mini-hint">Agrupa labs por dominio con progresión lineal.</span>
+      </div>
+      <div id="routes-list" class="routes-list"></div>
+    </section>
+
+    <section class="panel stats">
+      <h2>Progreso</h2>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <p class="label">XP Total</p>
+          <p class="value" id="xp-total">0</p>
+        </div>
+        <div class="stat-card">
+          <p class="label">Nivel</p>
+          <p class="value" id="level-name">-</p>
+        </div>
+        <div class="stat-card">
+          <p class="label">Labs completados</p>
+          <p class="value" id="labs-completed">0</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel labs">
+      <div class="panel-header space-between">
+        <div>
+          <h2>Labs por ruta</h2>
+          <span class="mini-hint" id="current-route-label">Selecciona una ruta para ver su recorrido.</span>
+        </div>
+        <span class="pill soft" id="route-progress-pill">0% ruta</span>
+      </div>
+      <div id="labs-list" class="labs-list"></div>
+    </section>
+
+    <section class="panel detail">
+      <div class="panel-header">
+        <h2 id="lab-title">Selecciona un lab</h2>
+        <span class="pill" id="lab-status">-</span>
+      </div>
+      <div class="lab-content">
+        <p class="label">Historia</p>
+        <p id="lab-story">Elige un lab para ver la narrativa.</p>
+
+        <p class="label">Objetivo</p>
+        <p id="lab-objective">-</p>
+
+        <p class="label">Reglas</p>
+        <ul id="lab-rules"></ul>
+
+        <p class="label">Entregable</p>
+        <p id="lab-deliverable" class="mini-hint">-</p>
+        <p class="label">Acciones</p>
+        <div class="actions">
+          <button id="verify-btn">Verificar progreso</button>
+          <span id="lab-status-chip" class="pill">Pendiente</span>
+        </div>
+        <div id="validation-message" class="status-box hidden"></div>
+        <p class="mini-hint">La entrega se valida con tu Pull Request en el repo del Lab. No pegues links aquí.</p>
+      </div>
+    </section>
+
+    <section class="panel ranking">
+      <div class="panel-header">
+        <h2>Ranking local</h2>
+        <span class="mini-hint">Comparte navegador = comparte progreso.</span>
+      </div>
+      <div id="ranking-list" class="ranking-list"></div>
+    </section>
+  </main>
+
+  <footer class="footer">Diseñado para aprender haciendo. Sin teoría, solo labs. 🛠️</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
