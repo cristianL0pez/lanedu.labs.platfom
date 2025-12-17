@@ -6,7 +6,8 @@ const labs = [
     title: 'El jefe necesita el archivo YA',
     level: 'Beginner',
     xp: 100,
-    repo: 'lanedu-labs/lab-01-backup',
+    // Ajuste específico para LAB-01: repositorio oficial en lanedu-org
+    repo: 'lanedu-org/lanedu-lab-01-backup-logs',
     story:
       'Tu lead te escribió por chat: “necesito un backup limpio de logs antes de las 18:00, el auditor está aquí”.',
     objective: 'Crear un script que comprima los logs de /var/log (o carpeta simulada) y genere un archivo con fecha.',
