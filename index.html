@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LANEDU Labs - Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="login-screen" class="overlay">
+    <div class="login-card">
+      <h1>LANEDU Labs</h1>
+      <p class="subtitle">Simulación de trabajo real para hackers del día a día.</p>
+      <form id="login-form">
+        <label for="username">Ingresa tu alias</label>
+        <input type="text" id="username" name="username" placeholder="ej. noctua" required />
+        <button type="submit">Entrar al laboratorio</button>
+      </form>
+      <p class="hint">Sin contraseñas. Tu progreso vive en este navegador.</p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="logo">⚡ LANEDU Labs</div>
+    <div class="player-info">
+      <span id="player-name">Jugador</span>
+      <span class="badge" id="player-level">Nivel 1</span>
+      <button id="logout-btn" class="ghost">Salir</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel stats">
+      <h2>Progreso</h2>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <p class="label">XP Total</p>
+          <p class="value" id="xp-total">0</p>
+        </div>
+        <div class="stat-card">
+          <p class="label">Nivel</p>
+          <p class="value" id="level-name">-</p>
+        </div>
+        <div class="stat-card">
+          <p class="label">Labs completados</p>
+          <p class="value" id="labs-completed">0</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel labs">
+      <div class="panel-header">
+        <h2>Labs disponibles</h2>
+        <span class="mini-hint">Desbloquea paso a paso. Documenta antes de entregar.</span>
+      </div>
+      <div id="labs-list" class="labs-list"></div>
+    </section>
+
+    <section class="panel detail">
+      <div class="panel-header">
+        <h2 id="lab-title">Selecciona un lab</h2>
+        <span class="pill" id="lab-status">-</span>
+      </div>
+      <div class="lab-content">
+        <p class="label">Historia</p>
+        <p id="lab-story">Elige un lab para ver la narrativa.</p>
+
+        <p class="label">Objetivo</p>
+        <p id="lab-objective">-</p>
+
+        <p class="label">Reglas</p>
+        <ul id="lab-rules"></ul>
+
+        <p class="label">Entregable (link público)</p>
+        <p id="lab-deliverable" class="mini-hint">-</p>
+        <input type="url" id="lab-link" placeholder="https://github.com/tu-doc" />
+        <p class="label">Acciones</p>
+        <div class="actions">
+          <button id="complete-btn">Marcar como completado</button>
+        </div>
+        <p class="mini-hint">Debes documentar tu proceso. Usa repos, Gists, Notion o el espacio que prefieras.</p>
+      </div>
+    </section>
+
+    <section class="panel ranking">
+      <div class="panel-header">
+        <h2>Ranking local</h2>
+        <span class="mini-hint">Comparte navegador = comparte progreso.</span>
+      </div>
+      <div id="ranking-list" class="ranking-list"></div>
+    </section>
+  </main>
+
+  <footer class="footer">Diseñado para aprender haciendo. Sin teoría, solo labs. 🛠️</footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
