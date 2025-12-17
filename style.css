@@ -158,6 +158,7 @@ button.ghost {
   display: grid;
   grid-template-columns: 2fr 3fr;
   grid-template-areas:
+    'routes routes'
     'stats stats'
     'labs detail'
     'ranking detail';
@@ -183,6 +184,11 @@ button.ghost {
   flex-wrap: wrap;
 }
 
+.panel-header.space-between {
+  align-items: flex-start;
+}
+
+.routes { grid-area: routes; }
 .stats { grid-area: stats; }
 .labs { grid-area: labs; }
 .detail { grid-area: detail; }
@@ -217,6 +223,13 @@ button.ghost {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
   margin-top: 12px;
+}
+
+.routes-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .lab-card {
@@ -263,6 +276,12 @@ button.ghost {
   border-radius: 999px;
   border: 1px solid var(--border);
   font-size: 12px;
+}
+
+.pill.soft {
+  background: rgba(119, 225, 255, 0.08);
+  color: #d6f0ff;
+  border: 1px solid rgba(119, 225, 255, 0.2);
 }
 
 .lab-content {
@@ -382,4 +401,61 @@ button.ghost {
   .topbar { flex-direction: column; align-items: flex-start; gap: 8px; }
   button { width: 100%; text-align: center; }
   .actions { flex-direction: column; align-items: stretch; }
+}
+
+/* Rutas de aprendizaje */
+.route-card {
+  background: linear-gradient(135deg, #0f1c2b, #0c2538);
+  border: 1px solid rgba(119, 225, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.route-card:hover,
+.route-card.active {
+  transform: translateY(-2px);
+  border-color: rgba(119, 225, 255, 0.35);
+}
+
+.route-card h3 {
+  margin: 0;
+  color: #e2f1ff;
+}
+
+.route-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  align-items: center;
+}
+
+.route-progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(119, 225, 255, 0.12);
+  border-radius: 999px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.route-progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #52f6df, #77e1ff);
+}
+
+.subroute-block {
+  grid-column: 1 / -1;
+  background: rgba(119, 225, 255, 0.04);
+  border: 1px dashed rgba(119, 225, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.subroute-block h4 {
+  margin: 0 0 8px 0;
+  color: #cde7ff;
 }

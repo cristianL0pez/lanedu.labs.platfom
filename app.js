@@ -167,8 +167,35 @@ const state = {
   githubToken: null,
   progress: {},
   selectedLab: null,
-  checking: false
+  checking: false,
+  routes: [],
+  selectedRoute: null,
+  routesLoaded: false
 };
+
+async function loadRoutes() {
+  try {
+    const response = await fetch('routes.json');
+    const data = await response.json();
+    state.routes = data.routes || [];
+    state.routes.forEach((route) => {
+      const syncRepo = (entry) => {
+        const labData = labs.find((l) => l.labId === entry.lab_id);
+        if (labData && entry.repo) {
+          // Mantener los repos base alineados con la metadata central de rutas
+          labData.repo = entry.repo;
+        }
+      };
+      (route.labs || []).forEach(syncRepo);
+      (route.subroutes || []).forEach((sub) => (sub.labs || []).forEach(syncRepo));
+    });
+    state.selectedRoute = state.routes[0]?.id || null;
+    state.routesLoaded = true;
+    renderAll();
+  } catch (error) {
+    console.error('No se pudieron cargar las rutas de aprendizaje', error);
+  }
+}
 
 function loadSession() {
   const storedUser = localStorage.getItem(storageKeys.user);
@@ -214,6 +241,39 @@ function isUnlocked(labIndex) {
   return Boolean(previousProgress && previousProgress.status === 'completed');
 }
 
+function getRouteLabs(routeId) {
+  const route = state.routes.find((r) => r.id === routeId);
+  if (!route) return [];
+
+  const collected = [];
+  const pushLab = (entry, subrouteName = null) => {
+    const labData = labs.find((l) => l.labId === entry.lab_id);
+    if (labData) {
+      collected.push({ lab: labData, meta: { ...entry, subroute: subrouteName } });
+    }
+  };
+
+  (route.labs || []).forEach((lab) => pushLab(lab));
+  (route.subroutes || []).forEach((sub) => {
+    (sub.labs || []).forEach((lab) => pushLab(lab, sub.name));
+  });
+
+  return collected.sort((a, b) => (a.meta.order || 0) - (b.meta.order || 0));
+}
+
+function getCurrentRouteLabs() {
+  if (!state.selectedRoute) return [];
+  return getRouteLabs(state.selectedRoute);
+}
+
+function getRouteProgress(routeId) {
+  const labsInRoute = getRouteLabs(routeId);
+  const total = labsInRoute.length;
+  const completed = labsInRoute.filter(({ lab }) => state.progress[lab.id]?.status === 'completed').length;
+  const percent = total ? Math.round((completed / total) * 100) : 0;
+  return { completed, total, percent };
+}
+
 function getLabStatus(labId) {
   const progress = state.progress[labId];
   if (!progress) return 'Pendiente';
@@ -222,27 +282,123 @@ function getLabStatus(labId) {
   return progress.status || 'Pendiente';
 }
 
+function renderRoutes() {
+  const container = document.getElementById('routes-list');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (!state.routesLoaded) {
+    container.innerHTML = '<p class="mini-hint">Cargando rutas...</p>';
+    return;
+  }
+
+  if (!state.routes.length) {
+    container.innerHTML = '<p class="mini-hint">No hay rutas configuradas aún.</p>';
+    return;
+  }
+
+  state.routes.forEach((route) => {
+    const progress = getRouteProgress(route.id);
+    const card = document.createElement('div');
+    card.className = `route-card ${state.selectedRoute === route.id ? 'active' : ''}`;
+    card.innerHTML = `
+      <h3>${route.name}</h3>
+      <div class="route-meta">
+        <span class="pill">${progress.completed}/${progress.total} labs</span>
+        <span class="pill soft">${route.levels?.join(' › ') || 'Secuencia'}</span>
+      </div>
+      <div class="route-progress"><span style="width:${progress.percent}%;"></span></div>
+      <p class="mini-hint">Ruta ${progress.percent}% completa</p>
+    `;
+    card.addEventListener('click', () => {
+      state.selectedRoute = route.id;
+      const labsInRoute = getCurrentRouteLabs();
+      if (state.selectedLab && !labsInRoute.some((item) => item.lab.id === state.selectedLab)) {
+        state.selectedLab = labsInRoute[0]?.lab.id || null;
+      }
+      renderRoutes();
+      renderLabs();
+    });
+    container.appendChild(card);
+  });
+}
+
 function renderLabs() {
   const list = document.getElementById('labs-list');
   list.innerHTML = '';
-  labs.forEach((lab, index) => {
+  const routeLabs = getCurrentRouteLabs();
+  const route = state.routes.find((r) => r.id === state.selectedRoute);
+
+  const routeLabel = document.getElementById('current-route-label');
+  const progressPill = document.getElementById('route-progress-pill');
+
+  if (route) {
+    const progress = getRouteProgress(route.id);
+    if (routeLabel) routeLabel.textContent = `${route.name} · ${route.levels?.join(' › ') || 'Secuencia lineal'}`;
+    if (progressPill) progressPill.textContent = `${progress.percent}% ruta`;
+  } else {
+    if (routeLabel) routeLabel.textContent = 'Selecciona una ruta para ver los Labs ordenados.';
+    if (progressPill) progressPill.textContent = '0% ruta';
+  }
+
+  if (!routeLabs.length) {
+    list.innerHTML = '<p class="mini-hint">Selecciona una ruta para visualizar sus labs.</p>';
+    return;
+  }
+
+  let currentSubroute = null;
+  let currentContainer = list;
+
+  const ensureSelection = () => {
+    const ids = routeLabs.map((item) => item.lab.id);
+    if (!state.selectedLab && ids.length) {
+      state.selectedLab = ids[0];
+    }
+    if (state.selectedLab && !ids.includes(state.selectedLab) && ids.length) {
+      state.selectedLab = ids[0];
+    }
+  };
+
+  routeLabs.forEach(({ lab, meta }) => {
+    if (meta.subroute && meta.subroute !== currentSubroute) {
+      currentSubroute = meta.subroute;
+      const block = document.createElement('div');
+      block.className = 'subroute-block';
+      const title = document.createElement('h4');
+      title.textContent = `Subruta: ${meta.subroute}`;
+      block.appendChild(title);
+      const inner = document.createElement('div');
+      inner.className = 'labs-list';
+      block.appendChild(inner);
+      list.appendChild(block);
+      currentContainer = inner;
+    } else if (!meta.subroute) {
+      currentSubroute = null;
+      currentContainer = list;
+    }
+
     const completed = state.progress[lab.id]?.status === 'completed';
-    const unlocked = isUnlocked(index);
+    const unlocked = isUnlocked(labs.findIndex((l) => l.id === lab.id));
     const card = document.createElement('div');
     card.className = `lab-card ${unlocked ? '' : 'locked'}`;
     card.innerHTML = `
       <div class="lab-meta">
-        <span class="tag ${lab.level.toLowerCase()}">${lab.level}</span>
+        <span class="tag ${lab.level.toLowerCase()}">${meta.difficulty || lab.level}</span>
         <span class="pill">${lab.xp} XP</span>
       </div>
-      <h3>${lab.title}</h3>
-      <p class="mini-hint">${completed ? 'Completado' : unlocked ? 'Disponible' : 'Bloqueado'}</p>
+      <h3>${lab.labId} · ${lab.title}</h3>
+      <p class="mini-hint">${completed ? 'Completado' : unlocked ? 'Disponible' : 'Bloqueado'} · Orden ${meta.order || '-'}</p>
     `;
     if (unlocked) {
       card.addEventListener('click', () => selectLab(lab.id));
     }
-    list.appendChild(card);
+    currentContainer.appendChild(card);
   });
+
+  ensureSelection();
+  if (state.selectedLab) {
+    selectLab(state.selectedLab);
+  }
 }
 
 function selectLab(id) {
@@ -311,10 +467,10 @@ function renderRanking() {
 }
 
 function renderAll() {
+  renderRoutes();
   renderLabs();
   renderStats();
   renderRanking();
-  if (state.selectedLab) selectLab(state.selectedLab);
 }
 
 function showValidationMessage(type, message) {
@@ -481,4 +637,4 @@ function setupEvents() {
 
 setupEvents();
 loadSession();
-renderLabs();
+loadRoutes();

@@ -37,6 +37,14 @@
   </header>
 
   <main class="layout">
+    <section class="panel routes">
+      <div class="panel-header">
+        <h2>Rutas de aprendizaje</h2>
+        <span class="mini-hint">Agrupa labs por dominio con progresión lineal.</span>
+      </div>
+      <div id="routes-list" class="routes-list"></div>
+    </section>
+
     <section class="panel stats">
       <h2>Progreso</h2>
       <div class="stat-grid">
@@ -56,9 +64,12 @@
     </section>
 
     <section class="panel labs">
-      <div class="panel-header">
-        <h2>Labs disponibles</h2>
-        <span class="mini-hint">Desbloquea paso a paso. Documenta antes de entregar.</span>
+      <div class="panel-header space-between">
+        <div>
+          <h2>Labs por ruta</h2>
+          <span class="mini-hint" id="current-route-label">Selecciona una ruta para ver su recorrido.</span>
+        </div>
+        <span class="pill soft" id="route-progress-pill">0% ruta</span>
       </div>
       <div id="labs-list" class="labs-list"></div>
     </section>

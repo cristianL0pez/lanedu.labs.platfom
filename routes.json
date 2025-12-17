@@ -1,0 +1,162 @@
+{
+  "routes": [
+    {
+      "id": "linux",
+      "name": "Linux",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_id": "LAB-01",
+          "title": "Backup de logs",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-org/lanedu-lab-01-backup-logs"
+        },
+        {
+          "lab_id": "LAB-02",
+          "title": "Historia de comandos",
+          "difficulty": "Fácil",
+          "order": 2,
+          "repo": "lanedu-labs/lab-02-history-review"
+        },
+        {
+          "lab_id": "LAB-06",
+          "title": "Auditoría de cron",
+          "difficulty": "Medio",
+          "order": 3,
+          "repo": "lanedu-labs/lab-06-cron-audit"
+        },
+        {
+          "lab_id": "LAB-07",
+          "title": "Incidente SSH",
+          "difficulty": "Difícil",
+          "order": 4,
+          "repo": "lanedu-labs/lab-07-incident"
+        }
+      ]
+    },
+    {
+      "id": "git-github",
+      "name": "Git & GitHub",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_id": "LAB-03",
+          "title": "Onboarding automatizado",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-labs/lab-03-onboarding"
+        },
+        {
+          "lab_id": "LAB-05",
+          "title": "Checklist de despliegue",
+          "difficulty": "Medio",
+          "order": 2,
+          "repo": "lanedu-labs/lab-05-deploy-checklist"
+        },
+        {
+          "lab_id": "LAB-08",
+          "title": "Pipeline saludable",
+          "difficulty": "Medio",
+          "order": 3,
+          "repo": "lanedu-labs/lab-08-pipeline"
+        },
+        {
+          "lab_id": "LAB-09",
+          "title": "Blue Team vs Ransomware",
+          "difficulty": "Difícil",
+          "order": 4,
+          "repo": "lanedu-labs/lab-09-ransomware"
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "name": "Bases de Datos",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "subroutes": [
+        {
+          "id": "db-boot",
+          "name": "Levantamiento",
+          "labs": [
+            {
+              "lab_id": "LAB-04",
+              "title": "Mini API sin servidor",
+              "difficulty": "Fácil",
+              "order": 1,
+              "repo": "lanedu-labs/lab-04-mock-api"
+            }
+          ]
+        },
+        {
+          "id": "db-sql",
+          "name": "SQL",
+          "labs": [
+            {
+              "lab_id": "LAB-06",
+              "title": "Inventario de tareas",
+              "difficulty": "Medio",
+              "order": 2,
+              "repo": "lanedu-labs/lab-06-cron-audit"
+            }
+          ]
+        },
+        {
+          "id": "db-normalization",
+          "name": "Normalización",
+          "labs": [
+            {
+              "lab_id": "LAB-08",
+              "title": "Pipeline saludable",
+              "difficulty": "Difícil",
+              "order": 3,
+              "repo": "lanedu-labs/lab-08-pipeline"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_id": "LAB-04",
+          "title": "Mini API sin servidor",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-labs/lab-04-mock-api"
+        },
+        {
+          "lab_id": "LAB-07",
+          "title": "Responder un incidente",
+          "difficulty": "Medio",
+          "order": 2,
+          "repo": "lanedu-labs/lab-07-incident"
+        }
+      ]
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_id": "LAB-05",
+          "title": "Checklist de despliegue",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-labs/lab-05-deploy-checklist"
+        },
+        {
+          "lab_id": "LAB-09",
+          "title": "Blue Team vs Ransomware",
+          "difficulty": "Difícil",
+          "order": 2,
+          "repo": "lanedu-labs/lab-09-ransomware"
+        }
+      ]
+    }
+  ]
+}
