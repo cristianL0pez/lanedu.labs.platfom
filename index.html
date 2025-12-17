@@ -10,13 +10,20 @@
   <div id="login-screen" class="overlay">
     <div class="login-card">
       <h1>LANEDU Labs</h1>
-      <p class="subtitle">Simulación de trabajo real para hackers del día a día.</p>
+      <p class="subtitle">Conecta tu cuenta de GitHub para validar Labs con Pull Requests.</p>
       <form id="login-form">
-        <label for="username">Ingresa tu alias</label>
-        <input type="text" id="username" name="username" placeholder="ej. noctua" required />
-        <button type="submit">Entrar al laboratorio</button>
+        <label for="github-token">Token personal o OAuth de GitHub</label>
+        <input
+          type="password"
+          id="github-token"
+          name="github-token"
+          placeholder="ghp_xxxxx"
+          required
+        />
+        <button type="submit">Conectar con GitHub</button>
       </form>
-      <p class="hint">Sin contraseñas. Tu progreso vive en este navegador.</p>
+      <p class="hint">No almacenamos tu código. Solo se usa para leer PRs y tu usuario.</p>
+      <p class="mini-hint">Genera un token con permisos de lectura en repos públicos.</p>
     </div>
   </div>
 
@@ -71,14 +78,15 @@
         <p class="label">Reglas</p>
         <ul id="lab-rules"></ul>
 
-        <p class="label">Entregable (link público)</p>
+        <p class="label">Entregable</p>
         <p id="lab-deliverable" class="mini-hint">-</p>
-        <input type="url" id="lab-link" placeholder="https://github.com/tu-doc" />
         <p class="label">Acciones</p>
         <div class="actions">
-          <button id="complete-btn">Marcar como completado</button>
+          <button id="verify-btn">Verificar progreso</button>
+          <span id="lab-status-chip" class="pill">Pendiente</span>
         </div>
-        <p class="mini-hint">Debes documentar tu proceso. Usa repos, Gists, Notion o el espacio que prefieras.</p>
+        <div id="validation-message" class="status-box hidden"></div>
+        <p class="mini-hint">La entrega se valida con tu Pull Request en el repo del Lab. No pegues links aquí.</p>
       </div>
     </section>
 
