@@ -1,215 +1,141 @@
+// labsCatalog.js (ES module válido)
+
 export const labsCatalog = [
   {
-    id: 'gh-lab00',
+    id: 'gh-lab0',
     labId: 'LAB-00',
-    title: 'Tu identidad profesional',
+    title: 'Crear cuenta GitHub',
     level: 'Beginner',
     xp: 40,
-    repo: null,
+    repo: 'lanedu-org/lanedu-lab-00-github-account',
     story:
-      'Es tu primer día en ACME Tech. Antes de asignarte cualquier tarea, Roberto —tu jefe técnico— te detiene: “Aquí todo pasa por GitHub. Si no tienes identidad digital, no existes para el equipo”. Tu primera misión no es técnica: es prepararte para entrar al mundo profesional.',
+      'Antes de cualquier pipeline o PR, necesitas tu identidad. Abre tu cuenta, configura 2FA y deja listo tu perfil.',
     objective:
-      'Crear una cuenta de GitHub configurada para un entorno profesional.',
-    validationType: 'manual',
-    validates:
-      'Existencia de cuenta GitHub, perfil completo y 2FA habilitado.',
-    doesNotValidate:
-      'Commits, repositorios o Pull Requests.',
+      'Crear una cuenta de GitHub lista para trabajo real: usuario, foto, bio profesional y autenticacion en dos pasos.',
     rules: [
-      'Crear una cuenta de GitHub.',
-      'Configurar nombre visible, bio y foto.',
-      'Habilitar autenticación en dos pasos (2FA).'
+      'Habilita 2FA en tu cuenta.',
+      'Configura un perfil claro (bio, nombre visible).',
+      'Captura tu URL de perfil para validacion.',
+      'Este Lab puede marcarse manualmente como completado.'
     ],
     deliverable:
-      'Perfil de GitHub configurado. El Lab se marca manualmente como completado.',
+      'Completa la configuracion de tu cuenta. Presiona "Verificar progreso" para marcarlo manualmente.',
     manualValidation: true
   },
   {
-    id: 'gh-lab01',
+    id: 'gh-lab1',
     labId: 'LAB-01',
-    title: 'Preparar tu entorno local',
+    title: 'Crear un repositorio',
     level: 'Beginner',
-    xp: 50,
-    repo: null,
+    xp: 60,
+    repo: 'lanedu-org/lanedu-lab-01-create-repo',
     story:
-      'Roberto te envía un mensaje: “Antes de tocar cualquier repo, asegúrate de que tu máquina esté lista. Nadie quiere perder horas por un Git mal configurado”. Tu entorno local es ahora parte del equipo.',
+      'Primera mision: crear tu repo base de trabajo para todo lo que viene.',
     objective:
-      'Instalar y configurar Git en tu entorno local.',
-    validationType: 'manual',
-    validates:
-      'Configuración básica de Git (user.name y user.email).',
-    doesNotValidate:
-      'Repositorios remotos o pushes.',
+      'Crear un repositorio publico con README y licencia, y preparar un primer commit.',
     rules: [
-      'Instalar Git.',
-      'Configurar nombre y correo.',
-      'Verificar instalación con git --version.'
+      'Incluye README.md con proposito del repo.',
+      'Agrega LICENSE.',
+      'Crea al menos un commit inicial.',
+      'Entrega se valida con Pull Request.'
     ],
     deliverable:
-      'Entorno local listo para trabajar con Git.',
-    manualValidation: true
+      'Pull Request hacia el repo base con el repositorio inicial listo.'
   },
   {
-    id: 'gh-lab02',
+    id: 'gh-lab2',
     labId: 'LAB-02',
-    title: 'Crear tu primer repositorio',
+    title: 'Clonar y modificar un repositorio',
     level: 'Beginner',
     xp: 60,
-    repo: null,
+    repo: 'lanedu-org/lanedu-lab-02-clone-edit',
     story:
-      '“Crea tu espacio de trabajo”, te dice Roberto. No es un repo cualquiera: será donde practicarás sin romper nada del equipo. Aquí empiezas a dejar rastro.',
+      'Recibes un repo ya creado. Debes clonarlo, hacer cambios minimos y proponerlos.',
     objective:
-      'Crear un repositorio público propio siguiendo buenas prácticas.',
-    validationType: 'repo-existence',
-    validates:
-      'Existencia de un repositorio público con nombre y archivos requeridos.',
-    doesNotValidate:
-      'Pull Requests o forks.',
+      'Clonar un repo, crear rama, modificar un archivo y preparar cambios para PR.',
     rules: [
-      'Repositorio público.',
-      'Debe incluir README.md.',
-      'Debe incluir LICENSE.'
+      'Incluye instrucciones reproducibles en el README.',
+      'Crea al menos un cambio visible.',
+      'Entrega mediante PR.'
     ],
     deliverable:
-      'Repositorio propio creado y accesible públicamente.'
+      'Pull Request con los cambios aplicados y documentados.'
   },
   {
-    id: 'gh-lab03',
+    id: 'gh-lab3',
     labId: 'LAB-03',
-    title: 'Tu primer commit',
-    level: 'Beginner',
-    xp: 60,
-    repo: null,
-    story:
-      'Roberto revisa tu repo y comenta: “Un repo sin commits no cuenta como trabajo”. Es hora de registrar tu primer cambio como profesional.',
-    objective:
-      'Realizar commits locales claros y con sentido.',
-    validationType: 'local-commit',
-    validates:
-      'Existencia de commits con mensajes claros en el repositorio propio.',
-    doesNotValidate:
-      'Push al remoto o PR.',
-    rules: [
-      'Al menos un commit.',
-      'Mensaje descriptivo.'
-    ],
-    deliverable:
-      'Repositorio con historial de commits inicial.'
-  },
-  {
-    id: 'gh-lab04',
-    labId: 'LAB-04',
-    title: 'Publicar tu trabajo',
+    title: 'Commits con sentido',
     level: 'Beginner',
     xp: 70,
-    repo: null,
+    repo: 'lanedu-org/lanedu-lab-03-meaningful-commits',
     story:
-      '“Si no está en remoto, no existe”, te recuerda Roberto. Es momento de publicar tu trabajo y hacerlo visible para otros.',
+      'Tu lead exige mensajes de commit claros. Debes demostrar disciplina de versionado.',
     objective:
-      'Subir tus commits al repositorio remoto.',
-    validationType: 'push',
-    validates:
-      'Commits correctamente empujados al remoto.',
-    doesNotValidate:
-      'Uso de ramas o PR.',
+      'Realizar commits atomicos con mensajes tipo convencional, incluyendo contexto.',
     rules: [
-      'Push exitoso a GitHub.',
-      'Repositorio actualizado.'
+      'Usa mensajes descriptivos (ej. feat:, fix:, chore:).',
+      'Agrupa cambios coherentes en commits separados.',
+      'Incluye un log de cambios en el PR.'
     ],
     deliverable:
-      'Repositorio remoto con commits visibles.'
+      'Pull Request con commits claros y revision lista.'
   },
   {
-    id: 'gh-lab05',
+    id: 'gh-lab4',
+    labId: 'LAB-04',
+    title: 'Push al repositorio remoto',
+    level: 'Beginner',
+    xp: 70,
+    repo: 'lanedu-org/lanedu-lab-04-push-remote',
+    story:
+      'Tienes cambios locales listos. Debes empujarlos correctamente al remoto sin romper nada.',
+    objective:
+      'Configurar remoto, hacer push y dejar un PR preparado con la rama publicada.',
+    rules: [
+      'Incluye screenshot o log del push.',
+      'Asegura que la rama remota este limpia.',
+      'Entrega mediante PR.'
+    ],
+    deliverable:
+      'Pull Request demostrando que el push y la rama remota estan correctos.'
+  },
+  {
+    id: 'gh-lab5',
     labId: 'LAB-05',
-    title: 'Trabajar con ramas',
+    title: 'Fork de un repositorio',
     level: 'Beginner',
     xp: 80,
-    repo: null,
+    repo: 'lanedu-org/lanedu-lab-05-fork',
     story:
-      'Roberto te detiene antes de seguir: “Nunca trabajamos directo en main”. Aprendes que las ramas existen para proteger al equipo.',
+      'Debes colaborar en un repo que no es tuyo. Practica el flujo completo con fork.',
     objective:
-      'Crear y trabajar en una rama separada.',
-    validationType: 'branch',
-    validates:
-      'Existencia de rama distinta a main con commits.',
-    doesNotValidate:
-      'Pull Requests.',
+      'Crear un fork, sincronizar con upstream y preparar cambios en tu copia.',
     rules: [
-      'Crear una rama.',
-      'Commits realizados fuera de main.'
+      'Configura remoto upstream.',
+      'Documenta como sincronizas con upstream.',
+      'Entrega mediante PR desde tu fork.'
     ],
     deliverable:
-      'Repositorio con rama activa y cambios separados.'
+      'Pull Request desde tu fork al repo base con cambios minimos.'
   },
   {
-    id: 'gh-lab06',
+    id: 'gh-lab6',
     labId: 'LAB-06',
-    title: 'Colaborar mediante forks',
-    level: 'Beginner',
-    xp: 90,
-    repo: 'lanedu-org/lanedu-lab-06-fork',
-    story:
-      'Ahora trabajas en un proyecto que no es del equipo. “Aquí no tienes permisos directos”, explica Roberto. Debes usar forks como en el mundo real.',
-    objective:
-      'Crear un fork y trabajar con upstream.',
-    validationType: 'fork',
-    validates:
-      'Fork correcto y sincronización con upstream.',
-    doesNotValidate:
-      'Validación automática.',
-    rules: [
-      'Fork del repositorio base.',
-      'Configuración de upstream.'
-    ],
-    deliverable:
-      'Fork con cambios listos.'
-  },
-  {
-    id: 'gh-lab07',
-    labId: 'LAB-07',
-    title: 'Tu primer Pull Request',
+    title: 'Crear un Pull Request valido',
     level: 'Beginner',
     xp: 100,
-    repo: 'lanedu-org/lanedu-lab-07-pr',
+    repo: 'lanedu-org/lanedu-lab-06-pr-valid',
     story:
-      'Última prueba del onboarding. Roberto es claro: “Este PR se evalúa como producción”. Todo cuenta.',
+      'Debes abrir tu primer PR real siguiendo buenas practicas: descripcion, checklist y archivos requeridos.',
     objective:
-      'Crear un Pull Request válido siguiendo las reglas del equipo.',
-    validationType: 'pull-request',
-    validates:
-      'Pull Request con título, descripción y cambios requeridos.',
-    doesNotValidate:
-      'Automatización avanzada.',
+      'Abrir un PR con titulo correcto, checklist y cambios minimos exigidos.',
     rules: [
-      'PR con formato correcto.',
-      'Cambios mínimos requeridos.'
+      'Incluye plantilla de PR rellenada.',
+      'Modifica al menos los archivos requeridos definidos en rules.json.',
+      'El PR debe estar abierto o mergeado.'
     ],
     deliverable:
-      'Pull Request válido contra el repo base.'
-  },
-  {
-    id: 'gh-lab08',
-    labId: 'LAB-08',
-    title: 'Conectar GitHub a LANEDU',
-    level: 'Beginner',
-    xp: 120,
-    repo: null,
-    story:
-      'Roberto asiente: “Ya sabes trabajar. Ahora automatizamos”. Es el momento de conectar tu cuenta para validaciones reales.',
-    objective:
-      'Conectar tu cuenta de GitHub a LANEDU para validación automática.',
-    validationType: 'automatic',
-    validates:
-      'Lectura de Pull Requests mediante token u OAuth.',
-    doesNotValidate:
-      'Contenido de código.',
-    rules: [
-      'Conectar cuenta GitHub.',
-      'Permisos de solo lectura.'
-    ],
-    deliverable:
-      'Cuenta conectada y lista para validaciones automáticas.'
+      'Pull Request valido contra el repo base, cumpliendo las reglas definidas.'
   },
   {
     id: 'lab1',
@@ -219,7 +145,7 @@ export const labsCatalog = [
     xp: 100,
     repo: 'lanedu-org/lanedu-lab-01-backup-logs',
     story:
-      'Tu lead te escribió por chat: “necesito un backup limpio de logs antes de las 18:00, el auditor está aquí”.',
+      'Tu lead te escribio por chat: "necesito un backup limpio de logs antes de las 18:00, el auditor esta aqui".',
     objective:
       'Crear un script que comprima los logs de /var/log (o carpeta simulada) y genere un archivo con fecha.',
     rules: [
@@ -238,13 +164,13 @@ export const labsCatalog = [
     xp: 120,
     repo: 'lanedu-labs/lab-02-history-review',
     story:
-      'Llegas a una máquina con historial caótico. Quieren saber qué comandos se ejecutaron para un incidente.',
+      'Llegas a una maquina con historial caotico. Quieren saber que comandos se ejecutaron para un incidente.',
     objective:
-      'Analizar el historial (.bash_history o similar) y resumir en un reporte qué comandos sospechosos encontraste.',
+      'Analizar el historial (.bash_history o similar) y resumir en un reporte que comandos sospechosos encontraste.',
     rules: [
       'No edites el historial original.',
-      'Incluye timestamps si están disponibles.',
-      'Entrega un resumen de 5-10 líneas.'
+      'Incluye timestamps si estan disponibles.',
+      'Entrega un resumen de 5-10 lineas.'
     ],
     deliverable:
       'Pull Request con tu reporte y comandos en el repo base.'
@@ -257,11 +183,11 @@ export const labsCatalog = [
     xp: 130,
     repo: 'lanedu-labs/lab-03-onboarding',
     story:
-      'Un compañero nuevo llega y no hay manual. Necesita ambiente listo en 10 minutos.',
+      'Un companero nuevo llega y no hay manual. Necesita ambiente listo en 10 minutos.',
     objective:
       'Crear un script que instale dependencias (ej. git, curl), configure alias y muestre mensaje de bienvenida.',
     rules: [
-      'Debe ser idempotente (si ya está instalado, no rompe).',
+      'Debe ser idempotente (si ya esta instalado, no rompe).',
       'Usa variables y comentarios claros.',
       'Incluye pasos para revertir cambios.'
     ],
@@ -300,7 +226,7 @@ export const labsCatalog = [
       'Construir una checklist interactiva (HTML/JS) que marque tareas y calcule porcentaje.',
     rules: [
       'Debe persistir estado localmente.',
-      'Incluye al menos 8 ítems críticos.',
+      'Incluye al menos 8 items criticos.',
       'Muestra un resumen visual (barra o texto).'
     ],
     deliverable:
@@ -314,13 +240,13 @@ export const labsCatalog = [
     xp: 200,
     repo: 'lanedu-labs/lab-06-cron-audit',
     story:
-      'La empresa perdió trazabilidad de sus cron jobs. Necesitan inventario rápido.',
+      'La empresa perdio trazabilidad de sus cron jobs. Necesitan inventario rapido.',
     objective:
-      'Levantar un inventario de cron jobs de un sistema (real o simulado) y proponer alertas básicas.',
+      'Levantar un inventario de cron jobs de un sistema (real o simulado) y proponer alertas basicas.',
     rules: [
       'Documenta comandos usados para listar crons.',
-      'Propón validaciones para saber si fallan.',
-      'Entrega tabla con dueño, comando y horario.'
+      'Propon validaciones para saber si fallan.',
+      'Entrega tabla con dueno, comando y horario.'
     ],
     deliverable:
       'Pull Request con inventario y propuestas en el repo base.'
@@ -333,13 +259,13 @@ export const labsCatalog = [
     xp: 220,
     repo: 'lanedu-labs/lab-07-incident',
     story:
-      'Alguien subió una llave SSH pública no autorizada. Debes reaccionar como responderías en guardia.',
+      'Alguien subio una llave SSH publica no autorizada. Debes reaccionar como responderias en guardia.',
     objective:
-      'Diseñar y documentar un playbook de respuesta: detección, contención, erradicación y recuperación.',
+      'Disenar y documentar un playbook de respuesta: deteccion, contencion, erradicacion y recuperacion.',
     rules: [
-      'Incluye comandos concretos de verificación.',
+      'Incluye comandos concretos de verificacion.',
       'Define responsables y tiempos estimados.',
-      'Agrega checklist de verificación final.'
+      'Agrega checklist de verificacion final.'
     ],
     deliverable:
       'Pull Request con el playbook y evidencias.'
@@ -354,7 +280,7 @@ export const labsCatalog = [
     story:
       'El pipeline CI falla sin logs claros. Debes estabilizarlo antes de la demo.',
     objective:
-      'Crear un pipeline mínimo (o simulado) con pasos de build, test y notificaciones, y registrar logs legibles.',
+      'Crear un pipeline minimo (o simulado) con pasos de build, test y notificaciones, y registrar logs legibles.',
     rules: [
       'Muestra variables de entorno sensibles como secretos (no en claro).',
       'Incluye al menos una prueba automatizada falsa o real.',
@@ -373,13 +299,14 @@ export const labsCatalog = [
     story:
       'Un servidor muestra actividad de cifrado masivo. Necesitas actuar como analista SOC.',
     objective:
-      'Diseñar un kit de contención rápida: checklist, scripts de aislamiento y plan de comunicación.',
+      'Disenar un kit de contencion rapida: checklist, scripts de aislamiento y plan de comunicacion.',
     rules: [
-      'Prioriza pasos de contención en < 15 minutos.',
+      'Prioriza pasos de contencion en menos de 15 minutos.',
       'Incluye scripts o comandos listos para ejecutar.',
-      'Agrega indicadores para monitorear propagación.'
+      'Agrega indicadores para monitorear propagacion.'
     ],
     deliverable:
-      'Pull Request con el kit de respuesta y documentación.'
+      'Pull Request con el kit de respuesta y documentacion.'
   }
 ];
+
