@@ -1,5 +1,4 @@
 export const labsCatalog = [
-  [
   {
     id: 'gh-lab00',
     labId: 'LAB-00',
@@ -365,5 +364,4 @@ export const labsCatalog = [
       'Agrega indicadores para monitorear propagación.'
     ],
     deliverable: 'Pull Request con el kit de respuesta y documentación.'
-  }
-];
+  }]
