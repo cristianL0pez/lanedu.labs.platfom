@@ -3,13 +3,15 @@ import { STORAGE_KEYS, LEGACY_STORAGE_KEYS } from '../../config/constants.js';
 const baseProfile = (alias) => ({
   alias,
   displayName: '',
+  email: '',
   role: '',
   githubHandle: '',
   githubToken: null,
   githubTokenMeta: { status: 'disconnected', last4: null, lastValidated: null, lastUsed: null },
   githubUser: null,
   progress: {},
-  status: 'new'
+  status: 'new',
+  auth: { provider: null, secret: null }
 });
 
 function normalizeProfile(profile, alias) {
@@ -151,10 +153,23 @@ export function recordLabProgress(labId, payload) {
 export function updateIdentity(payload) {
   return updateActiveProfile((profile) => ({
     displayName: payload.displayName ?? profile.displayName,
+    email: payload.email ?? profile.email,
     role: payload.role ?? profile.role,
     githubHandle: payload.githubHandle ?? profile.githubHandle,
     githubUser: payload.githubUser ?? profile.githubUser,
     status: profile.status || 'active'
+  }));
+}
+
+export function setAccountCredentials(payload) {
+  const secret = payload.password ? btoa(payload.password) : null;
+  return updateActiveProfile((profile) => ({
+    email: payload.email ?? profile.email,
+    auth: {
+      provider: secret ? 'local' : profile.auth?.provider || null,
+      secret: secret ?? profile.auth?.secret ?? null
+    },
+    status: 'active'
   }));
 }
 

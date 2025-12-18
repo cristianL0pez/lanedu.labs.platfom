@@ -137,7 +137,7 @@
     </header>
 
     <div id="empty-profile" class="empty-state" style="display:none;">
-      No hay un perfil activo. Ingresa primero desde el dashboard para crear tu sesión interna.
+      No hay un perfil activo. Crea tu cuenta desde el dashboard para gestionar identidad y tokens.
       <div style="margin-top:12px;">
         <a class="back-link" href="./index.html">Ir a Dashboard</a>
       </div>
@@ -147,6 +147,9 @@
       <section class="card" id="identity-card">
         <h3>Identidad Técnica</h3>
         <p class="helper">Estos datos se usan para personalizar tu experiencia. No se comparten fuera de LANEDU.</p>
+        <label for="email">Correo electrónico</label>
+        <input id="email" type="email" placeholder="tu@mail.com" />
+
         <label for="display-name">Nombre visible</label>
         <input id="display-name" type="text" placeholder="Tu nombre en la plataforma" />
 
@@ -229,6 +232,7 @@
     }
 
     function hydrateProfile(profile) {
+      document.getElementById('email').value = profile.email || '';
       document.getElementById('display-name').value = profile.displayName || '';
       document.getElementById('github-handle').value = profile.githubHandle || '';
       document.getElementById('github-url').value = profile.githubUser || '';
@@ -291,6 +295,7 @@
     function wireInteractions() {
       document.getElementById('save-identity').addEventListener('click', () => {
         updateIdentity({
+          email: document.getElementById('email').value.trim(),
           displayName: document.getElementById('display-name').value.trim(),
           githubHandle: document.getElementById('github-handle').value.trim(),
           githubUser: document.getElementById('github-url').value.trim(),
@@ -301,7 +306,7 @@
         renderStatus(updated);
       });
 
-      document.querySelectorAll('#display-name, #github-handle, #github-url, #role').forEach((input) => {
+      document.querySelectorAll('#email, #display-name, #github-handle, #github-url, #role').forEach((input) => {
         input.addEventListener('input', () => {
           document.getElementById('identity-status').textContent = 'PENDING';
         });

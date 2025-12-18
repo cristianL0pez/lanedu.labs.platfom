@@ -14,6 +14,7 @@ import {
   setActiveProfileAlias,
   saveProgress as persistProgress,
   recordLabProgress,
+  setAccountCredentials,
   setGithubCredentials,
   clearGithubCredentials,
   clearActiveProfile,
@@ -35,6 +36,7 @@ import {
 const labs = labsCatalog;
 const state = {
   currentUser: null,
+  userState: 'guest',
   displayName: '',
   role: '',
   githubHandle: '',
@@ -145,6 +147,7 @@ async function loadRoutes() {
 
 function syncStateWithProfile(profile, alias) {
   state.currentUser = alias;
+  state.userState = 'authenticated';
   state.currentProfile = profile;
   state.displayName = profile?.displayName || '';
   state.role = profile?.role || '';
@@ -165,7 +168,15 @@ function loadSession() {
   const activeAlias = getActiveProfileAlias();
   const profile = getActiveProfile();
   if (!activeAlias || !profile) {
-    showLogin();
+    state.userState = 'guest';
+    state.currentUser = null;
+    state.displayName = '';
+    state.role = '';
+    state.githubHandle = '';
+    state.progress = {};
+    hideLogin();
+    switchView('dashboard');
+    renderAll();
     return;
   }
   syncStateWithProfile(profile, activeAlias);
@@ -175,10 +186,16 @@ function loadSession() {
 }
 
 function saveProgress() {
+  if (state.userState !== 'authenticated') return;
   persistProgress(state.progress);
 }
 
-function showLogin() {
+function showLogin(reason) {
+  const reasonBox = document.getElementById('login-reason');
+  if (reasonBox) {
+    reasonBox.textContent = reason || '';
+    reasonBox.classList.toggle('hidden', !reason);
+  }
   document.getElementById('login-screen').classList.remove('hidden');
   hideGithubConnect();
 }
@@ -424,13 +441,14 @@ function calculateXP() {
 function renderStats() {
   const xp = calculateXP();
   const lvl = levelFromXP(xp);
+  const playerName = state.userState === 'authenticated' ? state.displayName || state.currentUser || 'Jugador' : 'Visitante';
   document.getElementById('xp-total').textContent = xp;
   document.getElementById('level-name').textContent = lvl.name;
   document.getElementById('labs-completed').textContent = Object.values(state.progress).filter(
     (p) => p.status === 'completed'
   ).length;
-  document.getElementById('player-name').textContent = state.displayName || state.currentUser || 'Jugador';
-  document.getElementById('player-level').textContent = lvl.label;
+  document.getElementById('player-name').textContent = playerName;
+  document.getElementById('player-level').textContent = state.userState === 'authenticated' ? lvl.label : 'Invitado';
 }
 
 function renderRanking() {
@@ -548,12 +566,22 @@ function renderProfileView() {
   renderTokenCard();
 }
 
+function updateAuthUI() {
+  const createBtn = document.getElementById('create-account-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const profileNav = document.getElementById('nav-profile');
+  if (createBtn) createBtn.classList.toggle('hidden', state.userState === 'authenticated');
+  if (logoutBtn) logoutBtn.classList.toggle('hidden', state.userState !== 'authenticated');
+  if (profileNav) profileNav.classList.toggle('disabled', state.userState !== 'authenticated');
+}
+
 function renderAll() {
   renderRoutes();
   renderLabs();
   renderStats();
   renderRanking();
   renderProfileView();
+  updateAuthUI();
 }
 
 function switchView(view) {
@@ -754,6 +782,10 @@ async function runValidationForLab(lab) {
 async function verifyCurrentLab() {
   if (!state.selectedLab) return alert('Selecciona un lab primero.');
   const lab = labs.find((l) => l.id === state.selectedLab);
+  if (state.userState !== 'authenticated') {
+    showLogin('Crea una cuenta para validar Labs y guardar tu progreso.');
+    return;
+  }
   const unlocked = isUnlocked(lab.id);
   if (!unlocked) return alert('Este lab está bloqueado. Completa el anterior.');
 
@@ -830,11 +862,17 @@ async function verifyCurrentLab() {
 async function handleLogin(event) {
   event.preventDefault();
   const alias = document.getElementById('player-alias').value.trim();
-  if (!alias) return;
-  const profile = ensureProfile(alias);
+  const email = document.getElementById('player-email').value.trim();
+  const password = document.getElementById('player-password').value.trim();
+  if (!alias || !email || !password) return;
+  ensureProfile(alias);
   setActiveProfileAlias(alias);
+  setAccountCredentials({ email, password });
+  const profile = getActiveProfile();
   if (!profile.displayName) {
-    updateIdentity({ displayName: alias });
+    updateIdentity({ displayName: alias, email });
+  } else if (email && profile.email !== email) {
+    updateIdentity({ email });
   }
   const refreshed = getActiveProfile();
   syncStateWithProfile(refreshed, alias);
@@ -845,6 +883,10 @@ async function handleLogin(event) {
 
 async function handleGithubConnect(event) {
   event.preventDefault();
+  if (state.userState !== 'authenticated') {
+    showLogin('Crea una cuenta para conectar GitHub.');
+    return;
+  }
   const token = document.getElementById('github-token').value.trim();
   if (!token) return;
   try {
@@ -867,6 +909,10 @@ async function handleGithubConnect(event) {
 
 async function handleProfileTokenSubmit(event) {
   event.preventDefault();
+  if (state.userState !== 'authenticated') {
+    showLogin('Crea una cuenta para conectar GitHub.');
+    return;
+  }
   const token = document.getElementById('profile-token').value.trim();
   if (!token) return;
   try {
@@ -883,6 +929,10 @@ async function handleProfileTokenSubmit(event) {
 }
 
 function handleTokenRevoke() {
+  if (state.userState !== 'authenticated') {
+    showLogin('Crea una cuenta para gestionar credenciales.');
+    return;
+  }
   clearGithubCredentials();
   state.githubToken = null;
   state.githubUser = null;
@@ -893,6 +943,10 @@ function handleTokenRevoke() {
 
 function handleIdentitySave(event) {
   event.preventDefault();
+  if (state.userState !== 'authenticated') {
+    showLogin('Crea una cuenta para guardar tu identidad.');
+    return;
+  }
   const displayName = document.getElementById('profile-name').value.trim();
   const githubHandle = document.getElementById('profile-handle').value.trim();
   const role = document.getElementById('profile-role').value.trim();
@@ -909,6 +963,7 @@ function handleLogout() {
   clearGithubCredentials();
   clearActiveProfile();
   state.currentUser = null;
+  state.userState = 'guest';
   state.displayName = '';
   state.role = '';
   state.githubHandle = '';
@@ -917,7 +972,8 @@ function handleLogout() {
   state.githubUser = null;
   state.githubTokenMeta = { status: 'disconnected', last4: null, lastValidated: null, lastUsed: null };
   state.progress = {};
-  showLogin();
+  hideLogin();
+  renderAll();
 }
 
 function setupEvents() {
@@ -938,11 +994,19 @@ function setupEvents() {
     handleLogout();
   });
 
+  const createAccountBtn = document.getElementById('create-account-btn');
+  if (createAccountBtn) createAccountBtn.addEventListener('click', () => showLogin('Crea tu cuenta para guardar progreso.'));
+
   const navDashboard = document.getElementById('nav-dashboard');
   const navProfile = document.getElementById('nav-profile');
   if (navDashboard) navDashboard.addEventListener('click', () => switchView('dashboard'));
   if (navProfile)
-    navProfile.addEventListener('click', () => {
+    navProfile.addEventListener('click', (event) => {
+      if (state.userState !== 'authenticated') {
+        event.preventDefault();
+        showLogin('Crea tu cuenta para acceder al Perfil.');
+        return;
+      }
       window.location.href = 'perfil.html';
     });
 
