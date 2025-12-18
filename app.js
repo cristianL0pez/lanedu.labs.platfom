@@ -637,13 +637,40 @@ async function validateProfileData(criteria = {}) {
 
 async function validateRepoAndFiles(lab, validation) {
   const targetRepo = resolveUserRepoFullName(lab, validation.criteria);
-  await fetchRepoMetadata(targetRepo, validation.requiresToken ? state.githubToken : null);
+  const token = validation.requiresToken ? state.githubToken : null;
+  const handle = ensureGithubHandle();
+  const metadata = await fetchRepoMetadata(targetRepo, token);
+  if (metadata?.owner?.login && metadata.owner.login.toLowerCase() !== handle.toLowerCase()) {
+    return { ok: false, reason: 'El repositorio debe pertenecer a tu cuenta.' };
+  }
+  if (validation.criteria.requirePublic && metadata.private) {
+    return { ok: false, reason: 'El repositorio debe ser público.' };
+  }
   const requiredFiles = validation.criteria.requiredFiles || [];
   for (const file of requiredFiles) {
     try {
-      await fetchRepoFile(targetRepo, file, validation.requiresToken ? state.githubToken : null);
+      await fetchRepoFile(targetRepo, file, token);
     } catch (err) {
       return { ok: false, reason: `Falta el archivo requerido: ${file}` };
+    }
+  }
+  if (validation.criteria.minUserCommits) {
+    const commits = await fetchCommits(
+      targetRepo,
+      { per_page: 20, author: handle },
+      token
+    );
+    const authored = (commits || []).filter((c) => {
+      const authorLogin = c.author?.login || c.commit?.author?.name;
+      const committerLogin = c.committer?.login || c.commit?.committer?.name;
+      const normalizedHandle = handle.toLowerCase();
+      return (
+        (authorLogin && `${authorLogin}`.toLowerCase() === normalizedHandle) ||
+        (committerLogin && `${committerLogin}`.toLowerCase() === normalizedHandle)
+      );
+    });
+    if (authored.length < validation.criteria.minUserCommits) {
+      return { ok: false, reason: 'No se encontraron commits realizados por tu usuario en este repo.' };
     }
   }
   return { ok: true };

@@ -68,11 +68,16 @@ export const labsCatalog = [
     validation: {
       type: 'repo-existence',
       requiresToken: false,
-      criteria: { expectedRepoName: 'lanedu-onboarding', requiredFiles: ['README.md', 'LICENSE'] },
+      criteria: {
+        expectedRepoName: 'lanedu-lab-02-commits-locales',
+        requiredFiles: ['README.md'],
+        requirePublic: true,
+        minUserCommits: 1
+      },
       exclusions: ['No se valida PR ni token.']
     },
     validationType: 'repo-existence',
-    validationRules: { type: 'repo-existence', requires: ['README.md', 'LICENSE'] },
+    validationRules: { type: 'repo-existence', requires: ['README.md'] },
     validationChecks: ['Repo creado con README y LICENSE.', 'Commit inicial visible.', 'Nombre profesional.'],
     validationExclusions: ['No se valida PR ni token.'],
     rules: ['Incluye propósito en README.', 'Primer commit con mensaje claro.', 'Sin PR todavía.'],
