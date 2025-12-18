@@ -6,6 +6,7 @@ const baseProfile = (alias) => ({
   email: '',
   role: '',
   githubHandle: '',
+  githubUrl: '',
   githubToken: null,
   githubTokenMeta: { status: 'disconnected', last4: null, lastValidated: null, lastUsed: null },
   githubUser: null,
@@ -19,6 +20,7 @@ function normalizeProfile(profile, alias) {
   return {
     ...baseProfile(profile.alias || alias),
     ...profile,
+    githubUrl: profile.githubUrl || profile.githubUser || '',
     githubTokenMeta: {
       ...baseProfile(alias).githubTokenMeta,
       ...(profile.githubTokenMeta || {})
@@ -151,12 +153,22 @@ export function recordLabProgress(labId, payload) {
 }
 
 export function updateIdentity(payload) {
+  const normalizeGithubUrl = (value) => {
+    if (!value) return '';
+    const trimmed = `${value}`.trim();
+    if (!trimmed) return '';
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+    if (trimmed.startsWith('github.com')) return `https://${trimmed}`;
+    return `https://github.com/${trimmed.replace(/^@/, '')}`;
+  };
+  const normalizedUrl = normalizeGithubUrl(payload.githubUrl || payload.githubUser || '');
   return updateActiveProfile((profile) => ({
     displayName: payload.displayName ?? profile.displayName,
     email: payload.email ?? profile.email,
     role: payload.role ?? profile.role,
     githubHandle: payload.githubHandle ?? profile.githubHandle,
-    githubUser: payload.githubUser ?? profile.githubUser,
+    githubUser: payload.githubUser ?? profile.githubUser ?? normalizedUrl,
+    githubUrl: normalizedUrl || profile.githubUrl,
     status: profile.status || 'active'
   }));
 }

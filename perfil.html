@@ -235,7 +235,7 @@
       document.getElementById('email').value = profile.email || '';
       document.getElementById('display-name').value = profile.displayName || '';
       document.getElementById('github-handle').value = profile.githubHandle || '';
-      document.getElementById('github-url').value = profile.githubUser || '';
+      document.getElementById('github-url').value = profile.githubUrl || profile.githubUser || '';
       document.getElementById('role').value = profile.role || '';
       document.getElementById('identity-status').textContent = 'SAVED';
       renderToken(profile);
@@ -298,6 +298,7 @@
           email: document.getElementById('email').value.trim(),
           displayName: document.getElementById('display-name').value.trim(),
           githubHandle: document.getElementById('github-handle').value.trim(),
+          githubUrl: document.getElementById('github-url').value.trim(),
           githubUser: document.getElementById('github-url').value.trim(),
           role: document.getElementById('role').value.trim()
         });

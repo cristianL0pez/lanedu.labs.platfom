@@ -40,6 +40,7 @@ const state = {
   displayName: '',
   role: '',
   githubHandle: '',
+  githubUrl: '',
   currentProfile: null,
   githubToken: null,
   githubUser: null,
@@ -152,6 +153,7 @@ function syncStateWithProfile(profile, alias) {
   state.displayName = profile?.displayName || '';
   state.role = profile?.role || '';
   state.githubHandle = profile?.githubHandle || '';
+  state.githubUrl = profile?.githubUrl || profile?.githubUser || '';
   state.progress = profile?.progress || {};
   state.githubToken = decodeStoredToken(profile?.githubToken) || null;
   state.githubUser = profile?.githubUser || null;
@@ -173,6 +175,7 @@ function loadSession() {
     state.displayName = '';
     state.role = '';
     state.githubHandle = '';
+    state.githubUrl = '';
     state.progress = {};
     hideLogin();
     switchView('dashboard');
@@ -617,7 +620,15 @@ function resolveUserRepoFullName(lab, criteria = {}) {
 
 async function validateProfileData(criteria = {}) {
   const required = criteria.requiredFields || [];
-  const missing = required.filter((field) => !state[field] || !state[field].trim());
+  const missing = required.filter((field) => {
+    if (field === 'githubUrl') {
+      return !(state.githubUrl || state.githubUser);
+    }
+    if (field === 'githubHandle') {
+      return !(state.githubHandle || state.githubUser);
+    }
+    return !state[field] || !`${state[field]}`.trim();
+  });
   if (missing.length) {
     return { ok: false, reason: `Faltan campos en el Perfil: ${missing.join(', ')}` };
   }
@@ -950,9 +961,12 @@ function handleIdentitySave(event) {
   const displayName = document.getElementById('profile-name').value.trim();
   const githubHandle = document.getElementById('profile-handle').value.trim();
   const role = document.getElementById('profile-role').value.trim();
-  updateIdentity({ displayName, githubHandle, role });
+  const githubUrlInput = document.getElementById('profile-url');
+  const githubUrl = githubUrlInput ? githubUrlInput.value.trim() : state.githubUrl;
+  updateIdentity({ displayName, githubHandle, githubUrl, githubUser: githubUrl });
   state.displayName = displayName || state.currentUser;
   state.githubHandle = githubHandle;
+  state.githubUrl = githubUrl;
   state.role = role;
   renderProfileView();
   renderStats();
@@ -967,6 +981,7 @@ function handleLogout() {
   state.displayName = '';
   state.role = '';
   state.githubHandle = '';
+  state.githubUrl = '';
   state.currentProfile = null;
   state.githubToken = null;
   state.githubUser = null;
