@@ -1,113 +1,223 @@
 export const labsCatalog = [
+  [
   {
-    id: 'gh-lab0',
+    id: 'gh-lab00',
     labId: 'LAB-00',
-    title: 'Crear cuenta GitHub',
+    title: 'Tu identidad profesional',
     level: 'Beginner',
     xp: 40,
-    repo: 'lanedu-org/lanedu-lab-00-github-account',
+    repo: null,
     story:
-      'Antes de cualquier pipeline o PR, necesitas tu identidad. Abre tu cuenta, configura 2FA y deja listo tu perfil.',
+      'Es tu primer día en ACME Tech. Antes de asignarte cualquier tarea, Roberto —tu jefe técnico— te detiene: “Aquí todo pasa por GitHub. Si no tienes identidad digital, no existes para el equipo”. Tu primera misión no es técnica: es prepararte para entrar al mundo profesional.',
     objective:
-      'Crear una cuenta de GitHub lista para trabajo real: usuario, foto, bio profesional y autenticación en dos pasos.',
+      'Crear una cuenta de GitHub configurada para un entorno profesional.',
+    validationType: 'manual',
+    validates:
+      'Existencia de cuenta GitHub, perfil completo y 2FA habilitado.',
+    doesNotValidate:
+      'Commits, repositorios o Pull Requests.',
     rules: [
-      'Habilita 2FA en tu cuenta.',
-      'Configura un perfil claro (bio, nombre visible).',
-      'Captura tu URL de perfil para validación.',
-      'Este Lab puede marcarse manualmente como completado.'
+      'Crear una cuenta de GitHub.',
+      'Configurar nombre visible, bio y foto.',
+      'Habilitar autenticación en dos pasos (2FA).'
     ],
-    deliverable: 'Completa la configuración de tu cuenta. Presiona “Verificar progreso” para marcarlo manualmente.',
+    deliverable:
+      'Perfil de GitHub configurado. El Lab se marca manualmente como completado.',
     manualValidation: true
   },
   {
-    id: 'gh-lab1',
+    id: 'gh-lab01',
     labId: 'LAB-01',
-    title: 'Crear un repositorio',
+    title: 'Preparar tu entorno local',
     level: 'Beginner',
-    xp: 60,
-    repo: 'lanedu-org/lanedu-lab-01-create-repo',
-    story: 'Primera misión: crear tu repo base de trabajo para todo lo que viene.',
-    objective: 'Crear un repositorio público con README y licencia, y preparar un primer commit.',
+    xp: 50,
+    repo: null,
+    story:
+      'Roberto te envía un mensaje: “Antes de tocar cualquier repo, asegúrate de que tu máquina esté lista. Nadie quiere perder horas por un Git mal configurado”. Tu entorno local es ahora parte del equipo.',
+    objective:
+      'Instalar y configurar Git en tu entorno local.',
+    validationType: 'manual',
+    validates:
+      'Configuración básica de Git (user.name y user.email).',
+    doesNotValidate:
+      'Repositorios remotos o pushes.',
     rules: [
-      'Incluye README.md con propósito del repo.',
-      'Agrega LICENSE.',
-      'Crea al menos un commit inicial.',
-      'Entrega se valida con Pull Request.'
+      'Instalar Git.',
+      'Configurar nombre y correo.',
+      'Verificar instalación con git --version.'
     ],
-    deliverable: 'Pull Request hacia el repo base con el repositorio inicial listo.'
+    deliverable:
+      'Entorno local listo para trabajar con Git.',
+    manualValidation: true
   },
+
   {
-    id: 'gh-lab2',
+    id: 'gh-lab02',
     labId: 'LAB-02',
-    title: 'Clonar y modificar un repositorio',
+    title: 'Crear tu primer repositorio',
     level: 'Beginner',
     xp: 60,
-    repo: 'lanedu-org/lanedu-lab-02-clone-edit',
-    story: 'Recibes un repo ya creado. Debes clonarlo, hacer cambios mínimos y proponerlos.',
-    objective: 'Clonar un repo, crear rama, modificar un archivo y preparar cambios para PR.',
-    rules: ['Incluye instrucciones reproducibles en el README.', 'Crea al menos un cambio visible.', 'Entrega mediante PR.'],
-    deliverable: 'Pull Request con los cambios aplicados y documentados.'
-  },
-  {
-    id: 'gh-lab3',
-    labId: 'LAB-03',
-    title: 'Commits con sentido',
-    level: 'Beginner',
-    xp: 70,
-    repo: 'lanedu-org/lanedu-lab-03-meaningful-commits',
-    story: 'Tu lead exige mensajes de commit claros. Debes demostrar disciplina de versionado.',
-    objective: 'Realizar commits atómicos con mensajes tipo convencional, incluyendo contexto.',
+    repo: null,
+    story:
+      '“Crea tu espacio de trabajo”, te dice Roberto. No es un repo cualquiera: será donde practicarás sin romper nada del equipo. Aquí empiezas a dejar rastro.',
+    objective:
+      'Crear un repositorio público propio siguiendo buenas prácticas.',
+    validationType: 'repo-existence',
+    validates:
+      'Existencia de un repositorio público con nombre y archivos requeridos.',
+    doesNotValidate:
+      'Pull Requests o forks.',
     rules: [
-      'Usa mensajes descriptivos (ej. feat:, fix:, chore:).',
-      'Agrupa cambios coherentes en commits separados.',
-      'Incluye un log de cambios en el PR.'
+      'Repositorio público.',
+      'Debe incluir README.md.',
+      'Debe incluir LICENSE.'
     ],
-    deliverable: 'Pull Request con commits claros y revisión lista.'
+    deliverable:
+      'Repositorio propio creado y accesible públicamente.'
   },
+
   {
-    id: 'gh-lab4',
+    id: 'gh-lab03',
+    labId: 'LAB-03',
+    title: 'Tu primer commit',
+    level: 'Beginner',
+    xp: 60,
+    repo: null,
+    story:
+      'Roberto revisa tu repo y comenta: “Un repo sin commits no cuenta como trabajo”. Es hora de registrar tu primer cambio como profesional.',
+    objective:
+      'Realizar commits locales claros y con sentido.',
+    validationType: 'local-commit',
+    validates:
+      'Existencia de commits con mensajes claros en el repositorio propio.',
+    doesNotValidate:
+      'Push al remoto o PR.',
+    rules: [
+      'Al menos un commit.',
+      'Mensaje descriptivo.'
+    ],
+    deliverable:
+      'Repositorio con historial de commits inicial.'
+  },
+
+  {
+    id: 'gh-lab04',
     labId: 'LAB-04',
-    title: 'Push al repositorio remoto',
+    title: 'Publicar tu trabajo',
     level: 'Beginner',
     xp: 70,
-    repo: 'lanedu-org/lanedu-lab-04-push-remote',
-    story: 'Tienes cambios locales listos. Debes empujarlos correctamente al remoto sin romper nada.',
-    objective: 'Configurar remoto, hacer push y dejar un PR preparado con la rama publicada.',
-    rules: ['Incluye screenshot o log del push.', 'Asegura que la rama remota esté limpia.', 'Entrega mediante PR.'],
-    deliverable: 'Pull Request demostrando que el push y la rama remota están correctos.'
+    repo: null,
+    story:
+      '“Si no está en remoto, no existe”, te recuerda Roberto. Es momento de publicar tu trabajo y hacerlo visible para otros.',
+    objective:
+      'Subir tus commits al repositorio remoto.',
+    validationType: 'push',
+    validates:
+      'Commits correctamente empujados al remoto.',
+    doesNotValidate:
+      'Uso de ramas o PR.',
+    rules: [
+      'Push exitoso a GitHub.',
+      'Repositorio actualizado.'
+    ],
+    deliverable:
+      'Repositorio remoto con commits visibles.'
   },
+
   {
-    id: 'gh-lab5',
+    id: 'gh-lab05',
     labId: 'LAB-05',
-    title: 'Fork de un repositorio',
+    title: 'Trabajar con ramas',
     level: 'Beginner',
     xp: 80,
-    repo: 'lanedu-org/lanedu-lab-05-fork',
-    story: 'Debes colaborar en un repo que no es tuyo. Practica el flujo completo con fork.',
-    objective: 'Crear un fork, sincronizar con upstream y preparar cambios en tu copia.',
+    repo: null,
+    story:
+      'Roberto te detiene antes de seguir: “Nunca trabajamos directo en main”. Aprendes que las ramas existen para proteger al equipo.',
+    objective:
+      'Crear y trabajar en una rama separada.',
+    validationType: 'branch',
+    validates:
+      'Existencia de rama distinta a main con commits.',
+    doesNotValidate:
+      'Pull Requests.',
     rules: [
-      'Configura remoto upstream.',
-      'Documenta cómo sincronizas con upstream.',
-      'Entrega mediante PR desde tu fork.'
+      'Crear una rama.',
+      'Commits realizados fuera de main.'
     ],
-    deliverable: 'Pull Request desde tu fork al repo base con cambios mínimos.'
+    deliverable:
+      'Repositorio con rama activa y cambios separados.'
   },
+
   {
-    id: 'gh-lab6',
+    id: 'gh-lab06',
     labId: 'LAB-06',
-    title: 'Crear un Pull Request válido',
+    title: 'Colaborar mediante forks',
+    level: 'Beginner',
+    xp: 90,
+    repo: 'lanedu-org/lanedu-lab-06-fork',
+    story:
+      'Ahora trabajas en un proyecto que no es del equipo. “Aquí no tienes permisos directos”, explica Roberto. Debes usar forks como en el mundo real.',
+    objective:
+      'Crear un fork y trabajar con upstream.',
+    validationType: 'fork',
+    validates:
+      'Fork correcto y sincronización con upstream.',
+    doesNotValidate:
+      'Validación automática.',
+    rules: [
+      'Fork del repositorio base.',
+      'Configuración de upstream.'
+    ],
+    deliverable:
+      'Fork con cambios listos.'
+  },
+
+  {
+    id: 'gh-lab07',
+    labId: 'LAB-07',
+    title: 'Tu primer Pull Request',
     level: 'Beginner',
     xp: 100,
-    repo: 'lanedu-org/lanedu-lab-06-pr-valid',
+    repo: 'lanedu-org/lanedu-lab-07-pr',
     story:
-      'Debes abrir tu primer PR real siguiendo buenas prácticas: descripción, checklist y archivos requeridos.',
-    objective: 'Abrir un PR con título correcto, checklist y cambios mínimos exigidos.',
+      'Última prueba del onboarding. Roberto es claro: “Este PR se evalúa como producción”. Todo cuenta.',
+    objective:
+      'Crear un Pull Request válido siguiendo las reglas del equipo.',
+    validationType: 'pull-request',
+    validates:
+      'Pull Request con título, descripción y cambios requeridos.',
+    doesNotValidate:
+      'Automatización avanzada.',
     rules: [
-      'Incluye plantilla de PR rellenada.',
-      'Modifica al menos los archivos requeridos definidos en rules.json.',
-      'El PR debe estar abierto o mergeado.'
+      'PR con formato correcto.',
+      'Cambios mínimos requeridos.'
     ],
-    deliverable: 'Pull Request válido contra el repo base, cumpliendo las reglas definidas.'
+    deliverable:
+      'Pull Request válido contra el repo base.'
+  },
+
+  {
+    id: 'gh-lab08',
+    labId: 'LAB-08',
+    title: 'Conectar GitHub a LANEDU',
+    level: 'Beginner',
+    xp: 120,
+    repo: null,
+    story:
+      'Roberto asiente: “Ya sabes trabajar. Ahora automatizamos”. Es el momento de conectar tu cuenta para validaciones reales.',
+    objective:
+      'Conectar tu cuenta de GitHub a LANEDU para validación automática.',
+    validationType: 'automatic',
+    validates:
+      'Lectura de Pull Requests mediante token u OAuth.',
+    doesNotValidate:
+      'Contenido de código.',
+    rules: [
+      'Conectar cuenta GitHub.',
+      'Permisos de solo lectura.'
+    ],
+    deliverable:
+      'Cuenta conectada y lista para validaciones automáticas.'
   },
   {
     id: 'lab1',
