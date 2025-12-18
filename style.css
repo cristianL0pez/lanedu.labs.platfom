@@ -386,6 +386,10 @@ button.ghost {
   font-size: 12px;
 }
 
+.mini-hint.warning {
+  color: var(--warning);
+}
+
 @media (max-width: 900px) {
   .layout {
     grid-template-columns: 1fr;
@@ -411,6 +415,21 @@ button.ghost {
   padding: 12px;
   cursor: pointer;
   transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.route-card.locked {
+  cursor: not-allowed;
+  opacity: 0.6;
+  position: relative;
+}
+
+.route-card.locked::after {
+  content: 'Ruta bloqueada';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  color: var(--warning);
 }
 
 .route-card:hover,

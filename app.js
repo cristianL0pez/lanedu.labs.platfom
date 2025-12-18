@@ -1,6 +1,116 @@
 // Datos base de Labs con integraciones GitHub
 const labs = [
   {
+    id: 'gh-lab0',
+    labId: 'LAB-00',
+    title: 'Crear cuenta GitHub',
+    level: 'Beginner',
+    xp: 40,
+    repo: 'lanedu-org/lanedu-lab-00-github-account',
+    story:
+      'Antes de cualquier pipeline o PR, necesitas tu identidad. Abre tu cuenta, configura 2FA y deja listo tu perfil.',
+    objective:
+      'Crear una cuenta de GitHub lista para trabajo real: usuario, foto, bio profesional y autenticación en dos pasos.',
+    rules: [
+      'Habilita 2FA en tu cuenta.',
+      'Configura un perfil claro (bio, nombre visible).',
+      'Captura tu URL de perfil para validación.',
+      'Este Lab puede marcarse manualmente como completado.'
+    ],
+    deliverable: 'Completa la configuración de tu cuenta. Presiona “Verificar progreso” para marcarlo manualmente.',
+    manualValidation: true
+  },
+  {
+    id: 'gh-lab1',
+    labId: 'LAB-01',
+    title: 'Crear un repositorio',
+    level: 'Beginner',
+    xp: 60,
+    repo: 'lanedu-org/lanedu-lab-01-create-repo',
+    story: 'Primera misión: crear tu repo base de trabajo para todo lo que viene.',
+    objective: 'Crear un repositorio público con README y licencia, y preparar un primer commit.',
+    rules: [
+      'Incluye README.md con propósito del repo.',
+      'Agrega LICENSE.',
+      'Crea al menos un commit inicial.',
+      'Entrega se valida con Pull Request.'
+    ],
+    deliverable: 'Pull Request hacia el repo base con el repositorio inicial listo.'
+  },
+  {
+    id: 'gh-lab2',
+    labId: 'LAB-02',
+    title: 'Clonar y modificar un repositorio',
+    level: 'Beginner',
+    xp: 60,
+    repo: 'lanedu-org/lanedu-lab-02-clone-edit',
+    story: 'Recibes un repo ya creado. Debes clonarlo, hacer cambios mínimos y proponerlos.',
+    objective: 'Clonar un repo, crear rama, modificar un archivo y preparar cambios para PR.',
+    rules: ['Incluye instrucciones reproducibles en el README.', 'Crea al menos un cambio visible.', 'Entrega mediante PR.'],
+    deliverable: 'Pull Request con los cambios aplicados y documentados.'
+  },
+  {
+    id: 'gh-lab3',
+    labId: 'LAB-03',
+    title: 'Commits con sentido',
+    level: 'Beginner',
+    xp: 70,
+    repo: 'lanedu-org/lanedu-lab-03-meaningful-commits',
+    story: 'Tu lead exige mensajes de commit claros. Debes demostrar disciplina de versionado.',
+    objective: 'Realizar commits atómicos con mensajes tipo convencional, incluyendo contexto.',
+    rules: [
+      'Usa mensajes descriptivos (ej. feat:, fix:, chore:).',
+      'Agrupa cambios coherentes en commits separados.',
+      'Incluye un log de cambios en el PR.'
+    ],
+    deliverable: 'Pull Request con commits claros y revisión lista.'
+  },
+  {
+    id: 'gh-lab4',
+    labId: 'LAB-04',
+    title: 'Push al repositorio remoto',
+    level: 'Beginner',
+    xp: 70,
+    repo: 'lanedu-org/lanedu-lab-04-push-remote',
+    story: 'Tienes cambios locales listos. Debes empujarlos correctamente al remoto sin romper nada.',
+    objective: 'Configurar remoto, hacer push y dejar un PR preparado con la rama publicada.',
+    rules: ['Incluye screenshot o log del push.', 'Asegura que la rama remota esté limpia.', 'Entrega mediante PR.'],
+    deliverable: 'Pull Request demostrando que el push y la rama remota están correctos.'
+  },
+  {
+    id: 'gh-lab5',
+    labId: 'LAB-05',
+    title: 'Fork de un repositorio',
+    level: 'Beginner',
+    xp: 80,
+    repo: 'lanedu-org/lanedu-lab-05-fork',
+    story: 'Debes colaborar en un repo que no es tuyo. Practica el flujo completo con fork.',
+    objective: 'Crear un fork, sincronizar con upstream y preparar cambios en tu copia.',
+    rules: [
+      'Configura remoto upstream.',
+      'Documenta cómo sincronizas con upstream.',
+      'Entrega mediante PR desde tu fork.'
+    ],
+    deliverable: 'Pull Request desde tu fork al repo base con cambios mínimos.'
+  },
+  {
+    id: 'gh-lab6',
+    labId: 'LAB-06',
+    title: 'Crear un Pull Request válido',
+    level: 'Beginner',
+    xp: 100,
+    repo: 'lanedu-org/lanedu-lab-06-pr-valid',
+    story:
+      'Debes abrir tu primer PR real siguiendo buenas prácticas: descripción, checklist y archivos requeridos.',
+    objective: 'Abrir un PR con título correcto, checklist y cambios mínimos exigidos.',
+    rules: [
+      'Incluye plantilla de PR rellenada.',
+      'Modifica al menos los archivos requeridos definidos en rules.json.',
+      'El PR debe estar abierto o mergeado.'
+    ],
+    deliverable: 'Pull Request válido contra el repo base, cumpliendo las reglas definidas.'
+  },
+  {
     id: 'lab1',
     labId: 'LAB-01',
     title: 'El jefe necesita el archivo YA',
@@ -156,6 +266,8 @@ const fakeUsers = [
   { name: 'packetNinja', xp: 300 }
 ];
 
+const ROUTE_ZERO_ID = 'ruta-0';
+
 const storageKeys = {
   user: 'laneduUser',
   token: 'laneduToken',
@@ -173,6 +285,16 @@ const state = {
   routesLoaded: false
 };
 
+function findLabForRouteEntry(entry) {
+  if (entry.lab_key) {
+    return labs.find((l) => l.id === entry.lab_key);
+  }
+  if (entry.lab_id) {
+    return labs.find((l) => l.labId === entry.lab_id);
+  }
+  return null;
+}
+
 async function loadRoutes() {
   try {
     const response = await fetch('routes.json');
@@ -180,7 +302,7 @@ async function loadRoutes() {
     state.routes = data.routes || [];
     state.routes.forEach((route) => {
       const syncRepo = (entry) => {
-        const labData = labs.find((l) => l.labId === entry.lab_id);
+        const labData = findLabForRouteEntry(entry);
         if (labData && entry.repo) {
           // Mantener los repos base alineados con la metadata central de rutas
           labData.repo = entry.repo;
@@ -195,6 +317,11 @@ async function loadRoutes() {
   } catch (error) {
     console.error('No se pudieron cargar las rutas de aprendizaje', error);
   }
+}
+
+function isRouteZeroComplete() {
+  const progress = getRouteProgress(ROUTE_ZERO_ID);
+  return progress.total > 0 && progress.completed === progress.total;
 }
 
 function loadSession() {
@@ -234,9 +361,29 @@ function levelFromXP(xp) {
   return { name: 'Becario en llamas', label: 'Nivel 1' };
 }
 
-function isUnlocked(labIndex) {
-  if (labIndex === 0) return true;
-  const previousLab = labs[labIndex - 1];
+function getRouteContainingLab(labId) {
+  return state.routes.find((route) =>
+    getRouteLabs(route.id).some(({ lab }) => lab.id === labId)
+  );
+}
+
+function isRouteUnlocked(routeId) {
+  if (!routeId) return false;
+  if (routeId === ROUTE_ZERO_ID) return true;
+  return isRouteZeroComplete();
+}
+
+function isUnlocked(labId) {
+  const route = getRouteContainingLab(labId);
+  if (!route) return false;
+  if (!isRouteUnlocked(route.id)) return false;
+
+  const routeLabs = getRouteLabs(route.id);
+  const indexInRoute = routeLabs.findIndex(({ lab }) => lab.id === labId);
+  if (indexInRoute === -1) return false;
+  if (indexInRoute === 0) return true;
+
+  const previousLab = routeLabs[indexInRoute - 1].lab;
   const previousProgress = state.progress[previousLab.id];
   return Boolean(previousProgress && previousProgress.status === 'completed');
 }
@@ -247,7 +394,7 @@ function getRouteLabs(routeId) {
 
   const collected = [];
   const pushLab = (entry, subrouteName = null) => {
-    const labData = labs.find((l) => l.labId === entry.lab_id);
+    const labData = findLabForRouteEntry(entry);
     if (labData) {
       collected.push({ lab: labData, meta: { ...entry, subroute: subrouteName } });
     }
@@ -299,8 +446,11 @@ function renderRoutes() {
 
   state.routes.forEach((route) => {
     const progress = getRouteProgress(route.id);
+    const locked = !isRouteUnlocked(route.id);
     const card = document.createElement('div');
-    card.className = `route-card ${state.selectedRoute === route.id ? 'active' : ''}`;
+    card.className = `route-card ${state.selectedRoute === route.id ? 'active' : ''} ${
+      locked ? 'locked' : ''
+    }`;
     card.innerHTML = `
       <h3>${route.name}</h3>
       <div class="route-meta">
@@ -308,17 +458,23 @@ function renderRoutes() {
         <span class="pill soft">${route.levels?.join(' › ') || 'Secuencia'}</span>
       </div>
       <div class="route-progress"><span style="width:${progress.percent}%;"></span></div>
-      <p class="mini-hint">Ruta ${progress.percent}% completa</p>
+      <p class="mini-hint">${
+        locked
+          ? 'Completa la Ruta 0 para desbloquear'
+          : `Ruta ${progress.percent}% completa`
+      }</p>
     `;
-    card.addEventListener('click', () => {
-      state.selectedRoute = route.id;
-      const labsInRoute = getCurrentRouteLabs();
-      if (state.selectedLab && !labsInRoute.some((item) => item.lab.id === state.selectedLab)) {
-        state.selectedLab = labsInRoute[0]?.lab.id || null;
-      }
-      renderRoutes();
-      renderLabs();
-    });
+    if (!locked) {
+      card.addEventListener('click', () => {
+        state.selectedRoute = route.id;
+        const labsInRoute = getCurrentRouteLabs();
+        if (state.selectedLab && !labsInRoute.some((item) => item.lab.id === state.selectedLab)) {
+          state.selectedLab = labsInRoute[0]?.lab.id || null;
+        }
+        renderRoutes();
+        renderLabs();
+      });
+    }
     container.appendChild(card);
   });
 }
@@ -341,8 +497,17 @@ function renderLabs() {
     if (progressPill) progressPill.textContent = '0% ruta';
   }
 
+  const lockedRoute = route && !isRouteUnlocked(route.id);
+
+  if (lockedRoute) {
+    list.innerHTML =
+      '<p class="mini-hint warning">Completa la Ruta 0 para desbloquear el acceso a esta ruta. Cada lab se habilita progresivamente.</p>';
+    return;
+  }
+
   if (!routeLabs.length) {
-    list.innerHTML = '<p class="mini-hint">Selecciona una ruta para visualizar sus labs.</p>';
+    list.innerHTML =
+      '<p class="mini-hint">Selecciona una ruta para visualizar sus labs.</p>';
     return;
   }
 
@@ -378,7 +543,7 @@ function renderLabs() {
     }
 
     const completed = state.progress[lab.id]?.status === 'completed';
-    const unlocked = isUnlocked(labs.findIndex((l) => l.id === lab.id));
+    const unlocked = isUnlocked(lab.id);
     const card = document.createElement('div');
     card.className = `lab-card ${unlocked ? '' : 'locked'}`;
     card.innerHTML = `
@@ -405,7 +570,7 @@ function selectLab(id) {
   const lab = labs.find((l) => l.id === id);
   if (!lab) return;
   state.selectedLab = lab.id;
-  const unlocked = isUnlocked(labs.findIndex((l) => l.id === id));
+  const unlocked = isUnlocked(lab.id);
   const completed = state.progress[lab.id]?.status === 'completed';
   document.getElementById('lab-title').textContent = `${lab.labId} · ${lab.title}`;
   document.getElementById('lab-status').textContent = completed
@@ -547,7 +712,7 @@ async function validatePullRequest(lab, rules) {
 async function verifyCurrentLab() {
   if (!state.selectedLab) return alert('Selecciona un lab primero.');
   const lab = labs.find((l) => l.id === state.selectedLab);
-  const unlocked = isUnlocked(labs.findIndex((l) => l.id === lab.id));
+  const unlocked = isUnlocked(lab.id);
   if (!unlocked) return alert('Este lab está bloqueado. Completa el anterior.');
   if (!state.githubToken) return alert('Conecta tu cuenta de GitHub primero.');
 
@@ -560,6 +725,19 @@ async function verifyCurrentLab() {
   document.getElementById('lab-status-chip').textContent = 'En revisión';
 
   try {
+    if (lab.manualValidation) {
+      state.progress[lab.id] = {
+        status: 'completed',
+        completedAt: new Date().toISOString(),
+        note: 'Validado manualmente (Ruta 0)'
+      };
+      saveProgress();
+      renderAll();
+      showValidationMessage('success', 'Ruta 0 · Progreso marcado manualmente.');
+      document.getElementById('lab-status-chip').textContent = 'Completado';
+      return;
+    }
+
     const rules = await fetchRules(lab);
     const validation = await validatePullRequest(lab, rules);
     if (validation.ok) {
