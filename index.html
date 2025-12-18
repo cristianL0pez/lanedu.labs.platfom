@@ -10,9 +10,28 @@
   <div id="login-screen" class="overlay">
     <div class="login-card">
       <h1>LANEDU Labs</h1>
-      <p class="subtitle">Conecta tu cuenta de GitHub para validar Labs con Pull Requests.</p>
+      <p class="subtitle">Crea tu perfil interno. Conectar GitHub será necesario solo al validar Labs.</p>
       <form id="login-form">
-        <label for="github-token">Token personal o OAuth de GitHub</label>
+        <label for="player-alias">Nombre de jugador</label>
+        <input
+          type="text"
+          id="player-alias"
+          name="player-alias"
+          placeholder="Tu alias en LANEDU"
+          required
+        />
+        <button type="submit">Entrar a LANEDU</button>
+      </form>
+      <p class="hint">Explora y aprende sin fricción. Te pediremos conectar GitHub solo al validar un Pull Request.</p>
+    </div>
+  </div>
+
+  <div id="github-connect" class="overlay hidden">
+    <div class="login-card">
+      <h2>Conectar con GitHub</h2>
+      <p class="subtitle">Solo para validar Labs con Pull Requests. No afecta tu navegación.</p>
+      <form id="github-connect-form">
+        <label for="github-token">Token personal u OAuth</label>
         <input
           type="password"
           id="github-token"
@@ -20,10 +39,10 @@
           placeholder="ghp_xxxxx"
           required
         />
-        <button type="submit">Conectar con GitHub</button>
+        <button type="submit">Conectar</button>
+        <button type="button" id="cancel-github-connect" class="ghost">Cancelar</button>
       </form>
-      <p class="hint">No almacenamos tu código. Solo se usa para leer PRs y tu usuario.</p>
-      <p class="mini-hint">Genera un token con permisos de lectura en repos públicos.</p>
+      <p class="mini-hint">Se usa solo para leer tu usuario y PRs. No almacenamos tu código.</p>
     </div>
   </div>
 
@@ -97,7 +116,7 @@
           <span id="lab-status-chip" class="pill">Pendiente</span>
         </div>
         <div id="validation-message" class="status-box hidden"></div>
-        <p class="mini-hint">La entrega se valida con tu Pull Request en el repo del Lab. No pegues links aquí.</p>
+        <p class="mini-hint">La entrega se valida con tu Pull Request en el repo del Lab. Conecta GitHub solo al momento de validar.</p>
       </div>
     </section>
 

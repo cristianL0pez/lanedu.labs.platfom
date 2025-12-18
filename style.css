@@ -115,6 +115,11 @@ button.ghost {
   margin-bottom: 14px;
 }
 
+.login-card form button {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
 .hint {
   color: var(--muted);
   font-size: 12px;

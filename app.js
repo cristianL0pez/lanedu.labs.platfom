@@ -271,12 +271,14 @@ const ROUTE_ZERO_ID = 'ruta-0';
 const storageKeys = {
   user: 'laneduUser',
   token: 'laneduToken',
+  githubUser: 'laneduGithubUser',
   progress: 'laneduProgress'
 };
 
 const state = {
   currentUser: null,
   githubToken: null,
+  githubUser: null,
   progress: {},
   selectedLab: null,
   checking: false,
@@ -284,6 +286,8 @@ const state = {
   selectedRoute: null,
   routesLoaded: false
 };
+
+let pendingVerificationLabId = null;
 
 function findLabForRouteEntry(entry) {
   if (entry.lab_key) {
@@ -327,16 +331,21 @@ function isRouteZeroComplete() {
 function loadSession() {
   const storedUser = localStorage.getItem(storageKeys.user);
   const storedToken = localStorage.getItem(storageKeys.token);
+  const storedGithubUser = localStorage.getItem(storageKeys.githubUser);
   const allProgress = JSON.parse(localStorage.getItem(storageKeys.progress) || '{}');
-  if (storedUser && storedToken) {
-    state.currentUser = storedUser;
-    state.githubToken = storedToken;
-    state.progress = allProgress[storedUser] || {};
-    hideLogin();
-    renderAll();
-  } else {
+  if (!storedUser) {
     showLogin();
+    return;
   }
+
+  state.currentUser = storedUser;
+  state.progress = allProgress[storedUser] || {};
+  if (storedToken) {
+    state.githubToken = storedToken;
+    state.githubUser = storedGithubUser;
+  }
+  hideLogin();
+  renderAll();
 }
 
 function saveProgress() {
@@ -347,10 +356,19 @@ function saveProgress() {
 
 function showLogin() {
   document.getElementById('login-screen').classList.remove('hidden');
+  hideGithubConnect();
 }
 
 function hideLogin() {
   document.getElementById('login-screen').classList.add('hidden');
+}
+
+function showGithubConnect() {
+  document.getElementById('github-connect').classList.remove('hidden');
+}
+
+function hideGithubConnect() {
+  document.getElementById('github-connect').classList.add('hidden');
 }
 
 function levelFromXP(xp) {
@@ -673,7 +691,8 @@ async function validatePullRequest(lab, rules) {
   const prs = await fetchGitHub(
     `https://api.github.com/repos/${lab.repo}/pulls?state=all&per_page=50`
   );
-  const userPRs = prs.filter((pr) => pr.user?.login?.toLowerCase() === state.currentUser?.toLowerCase());
+  const githubLogin = (state.githubUser || state.currentUser || '').toLowerCase();
+  const userPRs = prs.filter((pr) => pr.user?.login?.toLowerCase() === githubLogin);
   if (!userPRs.length) {
     return { ok: false, reason: 'No se encontró PR para este Lab.' };
   }
@@ -714,7 +733,25 @@ async function verifyCurrentLab() {
   const lab = labs.find((l) => l.id === state.selectedLab);
   const unlocked = isUnlocked(lab.id);
   if (!unlocked) return alert('Este lab está bloqueado. Completa el anterior.');
-  if (!state.githubToken) return alert('Conecta tu cuenta de GitHub primero.');
+
+  if (lab.manualValidation) {
+    state.progress[lab.id] = {
+      status: 'completed',
+      completedAt: new Date().toISOString(),
+      note: 'Validado manualmente (Ruta 0)'
+    };
+    saveProgress();
+    renderAll();
+    showValidationMessage('success', 'Ruta 0 · Progreso marcado manualmente.');
+    document.getElementById('lab-status-chip').textContent = 'Completado';
+    return;
+  }
+
+  if (!state.githubToken) {
+    pendingVerificationLabId = lab.id;
+    showGithubConnect();
+    return showValidationMessage('info', 'Conecta GitHub para validar este Lab con tu PR.');
+  }
 
   state.checking = true;
   document.getElementById('verify-btn').disabled = true;
@@ -725,19 +762,6 @@ async function verifyCurrentLab() {
   document.getElementById('lab-status-chip').textContent = 'En revisión';
 
   try {
-    if (lab.manualValidation) {
-      state.progress[lab.id] = {
-        status: 'completed',
-        completedAt: new Date().toISOString(),
-        note: 'Validado manualmente (Ruta 0)'
-      };
-      saveProgress();
-      renderAll();
-      showValidationMessage('success', 'Ruta 0 · Progreso marcado manualmente.');
-      document.getElementById('lab-status-chip').textContent = 'Completado';
-      return;
-    }
-
     const rules = await fetchRules(lab);
     const validation = await validatePullRequest(lab, rules);
     if (validation.ok) {
@@ -772,6 +796,22 @@ async function verifyCurrentLab() {
 
 async function handleLogin(event) {
   event.preventDefault();
+  const alias = document.getElementById('player-alias').value.trim();
+  if (!alias) return;
+  const allProgress = JSON.parse(localStorage.getItem(storageKeys.progress) || '{}');
+  state.currentUser = alias;
+  state.progress = allProgress[alias] || {};
+  state.githubToken = null;
+  state.githubUser = null;
+  localStorage.setItem(storageKeys.user, alias);
+  localStorage.removeItem(storageKeys.token);
+  localStorage.removeItem(storageKeys.githubUser);
+  hideLogin();
+  renderAll();
+}
+
+async function handleGithubConnect(event) {
+  event.preventDefault();
   const token = document.getElementById('github-token').value.trim();
   if (!token) return;
   try {
@@ -783,21 +823,31 @@ async function handleLogin(event) {
     });
     if (!user.ok) throw new Error('Token inválido o sin permisos.');
     const data = await user.json();
-    state.currentUser = data.login;
     state.githubToken = token;
-    const allProgress = JSON.parse(localStorage.getItem(storageKeys.progress) || '{}');
-    state.progress = allProgress[data.login] || {};
-    localStorage.setItem(storageKeys.user, data.login);
+    state.githubUser = data.login;
     localStorage.setItem(storageKeys.token, token);
-    hideLogin();
-    renderAll();
+    localStorage.setItem(storageKeys.githubUser, data.login);
+    hideGithubConnect();
+    showValidationMessage('success', 'GitHub conectado. Continúa validando tu Lab.');
+    const pendingLab = pendingVerificationLabId;
+    pendingVerificationLabId = null;
+    if (pendingLab && pendingLab === state.selectedLab) {
+      verifyCurrentLab();
+    }
   } catch (error) {
-    alert(error.message || 'No se pudo iniciar sesión con GitHub');
+    alert(error.message || 'No se pudo conectar con GitHub');
   }
 }
 
 function setupEvents() {
   document.getElementById('login-form').addEventListener('submit', handleLogin);
+
+  document.getElementById('github-connect-form').addEventListener('submit', handleGithubConnect);
+  document.getElementById('cancel-github-connect').addEventListener('click', () => {
+    pendingVerificationLabId = null;
+    hideGithubConnect();
+    showValidationMessage('info', 'Puedes conectar GitHub cuando quieras validar un Lab.');
+  });
 
   document.getElementById('verify-btn').addEventListener('click', () => {
     verifyCurrentLab();
@@ -806,8 +856,10 @@ function setupEvents() {
   document.getElementById('logout-btn').addEventListener('click', () => {
     localStorage.removeItem(storageKeys.user);
     localStorage.removeItem(storageKeys.token);
+    localStorage.removeItem(storageKeys.githubUser);
     state.currentUser = null;
     state.githubToken = null;
+    state.githubUser = null;
     state.progress = {};
     showLogin();
   });
