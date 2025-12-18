@@ -1,25 +1,5 @@
 export const labsCatalog = [
   {
-    id: 'gh-lab0',
-    labId: 'LAB-00',
-    title: 'Crear cuenta GitHub',
-    level: 'Beginner',
-    xp: 40,
-    repo: 'lanedu-org/lanedu-lab-00-github-account',
-    story:
-      'Antes de cualquier pipeline o PR, necesitas tu identidad. Abre tu cuenta, configura 2FA y deja listo tu perfil.',
-    objective:
-      'Crear una cuenta de GitHub lista para trabajo real: usuario, foto, bio profesional y autenticación en dos pasos.',
-    rules: [
-      'Habilita 2FA en tu cuenta.',
-      'Configura un perfil claro (bio, nombre visible).',
-      'Captura tu URL de perfil para validación.',
-      'Este Lab puede marcarse manualmente como completado.'
-    ],
-    deliverable: 'Completa la configuración de tu cuenta. Presiona “Verificar progreso” para marcarlo manualmente.',
-    manualValidation: true
-  },
-  {
   id: 'gh-lab0',
   labId: 'LAB-00',
   title: 'Crear cuenta GitHub',
@@ -149,6 +129,24 @@ export const labsCatalog = [
   deliverable: 'Pull Request válido contra el repo base, cumpliendo las reglas definidas.'
 }
 ,
+  {
+    id: 'lab1',
+    labId: 'LAB-01',
+    title: 'El jefe necesita el archivo YA',
+    level: 'Beginner',
+    xp: 100,
+    // Ajuste específico para LAB-01: repositorio oficial en lanedu-org
+    repo: 'lanedu-org/lanedu-lab-01-backup-logs',
+    story:
+      'Tu lead te escribió por chat: “necesito un backup limpio de logs antes de las 18:00, el auditor está aquí”.',
+    objective: 'Crear un script que comprima los logs de /var/log (o carpeta simulada) y genere un archivo con fecha.',
+    rules: [
+      'No borres archivos originales.',
+      'Incluye comandos o snippets que usaste.',
+      'Adjunta evidencia (capturas o salida del comando).'
+    ],
+    deliverable: 'Crea un Pull Request contra el repo base con el script de backup.'
+  },
   {
     id: 'lab2',
     labId: 'LAB-02',
