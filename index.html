@@ -106,6 +106,21 @@
         <p class="label">Objetivo</p>
         <p id="lab-objective">-</p>
 
+        <div class="validation-meta">
+          <div>
+            <p class="label">Tipo de validación</p>
+            <p id="lab-validation-type" class="mini-hint">-</p>
+          </div>
+          <div>
+            <p class="label">Qué se valida</p>
+            <ul id="lab-validation-checks"></ul>
+          </div>
+          <div>
+            <p class="label">Qué no se valida</p>
+            <ul id="lab-validation-exclusions"></ul>
+          </div>
+        </div>
+
         <p class="label">Reglas</p>
         <ul id="lab-rules"></ul>
 
@@ -117,7 +132,7 @@
           <span id="lab-status-chip" class="status-flag locked">LOCKED</span>
         </div>
         <div id="validation-message" class="status-box hidden"></div>
-        <p class="mini-hint">La entrega se valida con tu Pull Request en el repo del Lab. Conecta GitHub solo al momento de validar.</p>
+        <p class="mini-hint" id="validation-hint">La validación depende del tipo de Lab. Conecta GitHub solo cuando un Lab lo requiera.</p>
       </div>
     </section>
 

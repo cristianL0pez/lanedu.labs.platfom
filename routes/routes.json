@@ -17,7 +17,7 @@
         {
           "lab_key": "gh-lab1",
           "lab_id": "LAB-01",
-          "title": "Crear un repositorio",
+          "title": "Crear un repositorio propio",
           "difficulty": "Fácil",
           "order": 2,
           "repo": "lanedu-org/lanedu-lab-01-create-repo"
@@ -25,42 +25,50 @@
         {
           "lab_key": "gh-lab2",
           "lab_id": "LAB-02",
-          "title": "Clonar y modificar un repositorio",
+          "title": "Commits locales con intención",
           "difficulty": "Fácil",
           "order": 3,
-          "repo": "lanedu-org/lanedu-lab-02-clone-edit"
+          "repo": "lanedu-org/lanedu-lab-02-commits-locales"
         },
         {
           "lab_key": "gh-lab3",
           "lab_id": "LAB-03",
-          "title": "Commits con sentido",
+          "title": "Primer push remoto",
           "difficulty": "Fácil",
           "order": 4,
-          "repo": "lanedu-org/lanedu-lab-03-meaningful-commits"
+          "repo": "lanedu-org/lanedu-lab-03-primer-push"
         },
         {
           "lab_key": "gh-lab4",
           "lab_id": "LAB-04",
-          "title": "Push al repositorio remoto",
-          "difficulty": "Medio",
+          "title": "Trabajo en ramas",
+          "difficulty": "Fácil",
           "order": 5,
-          "repo": "lanedu-org/lanedu-lab-04-push-remote"
+          "repo": "lanedu-org/lanedu-lab-04-branches"
         },
         {
           "lab_key": "gh-lab5",
           "lab_id": "LAB-05",
-          "title": "Fork de un repositorio",
+          "title": "Fork y upstream",
           "difficulty": "Medio",
           "order": 6,
-          "repo": "lanedu-org/lanedu-lab-05-fork"
+          "repo": "lanedu-org/lanedu-lab-05-fork-upstream"
         },
         {
           "lab_key": "gh-lab6",
           "lab_id": "LAB-06",
-          "title": "Crear un Pull Request válido",
+          "title": "Pull Request completo",
           "difficulty": "Medio",
           "order": 7,
           "repo": "lanedu-org/lanedu-lab-06-pr-valid"
+        },
+        {
+          "lab_key": "gh-lab7",
+          "lab_id": "LAB-07",
+          "title": "Validación automática con token",
+          "difficulty": "Medio",
+          "order": 8,
+          "repo": "lanedu-org/lanedu-lab-07-automatic-verify"
         }
       ]
     },

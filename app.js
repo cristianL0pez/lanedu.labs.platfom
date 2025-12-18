@@ -314,6 +314,21 @@ function selectLab(id) {
   updateDetailStatus(lab.id);
   document.getElementById('lab-story').textContent = lab.story;
   document.getElementById('lab-objective').textContent = lab.objective;
+  document.getElementById('lab-validation-type').textContent = lab.validationType || 'Validación por PR';
+  const checksList = document.getElementById('lab-validation-checks');
+  checksList.innerHTML = '';
+  (lab.validationChecks || []).forEach((item) => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    checksList.appendChild(li);
+  });
+  const exclusionsList = document.getElementById('lab-validation-exclusions');
+  exclusionsList.innerHTML = '';
+  (lab.validationExclusions || []).forEach((item) => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    exclusionsList.appendChild(li);
+  });
   document.getElementById('lab-deliverable').textContent = lab.deliverable;
   const rulesList = document.getElementById('lab-rules');
   rulesList.innerHTML = '';
@@ -326,6 +341,14 @@ function selectLab(id) {
   const validationBox = document.getElementById('validation-message');
   validationBox.className = 'status-box hidden';
   validationBox.textContent = '';
+  const validationHint = document.getElementById('validation-hint');
+  if (lab.manualValidation) {
+    validationHint.textContent = 'Validación manual o declarativa. No necesitas conectar GitHub para este lab.';
+  } else if (lab.requiresGithub) {
+    validationHint.textContent = 'Este lab se valida con tu PR y rules.json. Conecta GitHub solo cuando vayas a verificar.';
+  } else {
+    validationHint.textContent = 'La validación depende del lab; sigue las instrucciones y marca tu progreso.';
+  }
 }
 
 function calculateXPFromProgress(progressMap) {
@@ -441,7 +464,7 @@ async function verifyCurrentLab() {
     return;
   }
 
-  if (!state.githubToken) {
+  if (lab.requiresGithub && !state.githubToken) {
     pendingVerificationLabId = lab.id;
     showGithubConnect();
     return showValidationMessage('info', 'Conecta GitHub para validar este Lab con tu PR.');

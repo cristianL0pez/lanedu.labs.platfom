@@ -415,6 +415,27 @@ button.ghost {
   color: var(--muted);
 }
 
+.validation-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 8px 0 16px;
+  padding: 10px;
+  border: 1px dashed rgba(75, 208, 255, 0.25);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.validation-meta ul {
+  list-style: square;
+  color: #cde8ff;
+  font-size: 14px;
+}
+
+.validation-meta .label {
+  color: #7ac7ff;
+}
+
 .actions {
   display: flex;
   gap: 10px;
