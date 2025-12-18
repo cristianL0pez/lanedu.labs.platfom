@@ -1,0 +1,265 @@
+{
+  "routes": [
+    {
+      "id": "ruta-0",
+      "name": "Fundamentos de GitHub y trabajo real",
+      "levels": ["Inicial"],
+      "mandatory": true,
+      "labs": [
+        {
+          "lab_key": "gh-lab0",
+          "lab_id": "LAB-00",
+          "title": "Crear cuenta GitHub y presentarte",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-org/lanedu-lab-00-github-account"
+        },
+        {
+          "lab_key": "gh-lab1",
+          "lab_id": "LAB-01",
+          "title": "Identidad interna y rol",
+          "difficulty": "Fácil",
+          "order": 2,
+          "repo": "lanedu-org/lanedu-lab-01-create-repo"
+        },
+        {
+          "lab_key": "gh-lab2",
+          "lab_id": "LAB-02",
+          "title": "Crear un repositorio propio",
+          "difficulty": "Fácil",
+          "order": 3,
+          "repo": "lanedu-org/lanedu-lab-02-commits-locales"
+        },
+        {
+          "lab_key": "gh-lab3",
+          "lab_id": "LAB-03",
+          "title": "Estructura de archivos base",
+          "difficulty": "Fácil",
+          "order": 4,
+          "repo": "lanedu-org/lanedu-lab-03-primer-push"
+        },
+        {
+          "lab_key": "gh-lab4",
+          "lab_id": "LAB-04",
+          "title": "Commits con intención",
+          "difficulty": "Fácil",
+          "order": 5,
+          "repo": "lanedu-org/lanedu-lab-04-branches"
+        },
+        {
+          "lab_key": "gh-lab5",
+          "lab_id": "LAB-05",
+          "title": "Push remoto controlado",
+          "difficulty": "Fácil",
+          "order": 6,
+          "repo": "lanedu-org/lanedu-lab-05-fork-upstream"
+        },
+        {
+          "lab_key": "gh-lab6",
+          "lab_id": "LAB-06",
+          "title": "Ramas y merges sin dolor",
+          "difficulty": "Medio",
+          "order": 7,
+          "repo": "lanedu-org/lanedu-lab-06-pr-valid"
+        },
+        {
+          "lab_key": "gh-lab7",
+          "lab_id": "LAB-07",
+          "title": "Fork y upstream en producción",
+          "difficulty": "Medio",
+          "order": 8,
+          "repo": "lanedu-org/lanedu-lab-07-automatic-verify"
+        },
+        {
+          "lab_key": "gh-lab8",
+          "lab_id": "LAB-08",
+          "title": "Pull Request completo (sin token)",
+          "difficulty": "Medio",
+          "order": 9,
+          "repo": "lanedu-org/lanedu-lab-08-pr-collab"
+        },
+        {
+          "lab_key": "gh-lab9",
+          "lab_id": "LAB-09",
+          "title": "Validación automática con token",
+          "difficulty": "Difícil",
+          "order": 10,
+          "repo": "lanedu-org/lanedu-lab-09-auto-verify"
+        }
+      ]
+    },
+    {
+      "id": "linux",
+      "name": "Linux",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_key": "lab1",
+          "lab_id": "LAB-01",
+          "title": "Backup de logs",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-org/lanedu-lab-01-backup-logs"
+        },
+        {
+          "lab_key": "lab2",
+          "lab_id": "LAB-02",
+          "title": "Historia de comandos",
+          "difficulty": "Fácil",
+          "order": 2,
+          "repo": "lanedu-labs/lab-02-history-review"
+        },
+        {
+          "lab_key": "lab6",
+          "lab_id": "LAB-06",
+          "title": "Auditoría de cron",
+          "difficulty": "Medio",
+          "order": 3,
+          "repo": "lanedu-labs/lab-06-cron-audit"
+        },
+        {
+          "lab_key": "lab7",
+          "lab_id": "LAB-07",
+          "title": "Incidente SSH",
+          "difficulty": "Difícil",
+          "order": 4,
+          "repo": "lanedu-labs/lab-07-incident"
+        }
+      ]
+    },
+    {
+      "id": "git-github",
+      "name": "Git & GitHub",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_key": "lab3",
+          "lab_id": "LAB-03",
+          "title": "Onboarding automatizado",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-labs/lab-03-onboarding"
+        },
+        {
+          "lab_key": "lab5",
+          "lab_id": "LAB-05",
+          "title": "Checklist de despliegue",
+          "difficulty": "Medio",
+          "order": 2,
+          "repo": "lanedu-labs/lab-05-deploy-checklist"
+        },
+        {
+          "lab_key": "lab8",
+          "lab_id": "LAB-08",
+          "title": "Pipeline saludable",
+          "difficulty": "Medio",
+          "order": 3,
+          "repo": "lanedu-labs/lab-08-pipeline"
+        },
+        {
+          "lab_key": "lab9",
+          "lab_id": "LAB-09",
+          "title": "Blue Team vs Ransomware",
+          "difficulty": "Difícil",
+          "order": 4,
+          "repo": "lanedu-labs/lab-09-ransomware"
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "name": "Bases de Datos",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "subroutes": [
+        {
+          "id": "db-boot",
+          "name": "Levantamiento",
+          "labs": [
+            {
+              "lab_key": "lab4",
+              "lab_id": "LAB-04",
+              "title": "Mini API sin servidor",
+              "difficulty": "Fácil",
+              "order": 1,
+              "repo": "lanedu-labs/lab-04-mock-api"
+            }
+          ]
+        },
+        {
+          "id": "db-sql",
+          "name": "SQL",
+          "labs": [
+            {
+              "lab_key": "lab6",
+              "lab_id": "LAB-06",
+              "title": "Inventario de tareas",
+              "difficulty": "Medio",
+              "order": 2,
+              "repo": "lanedu-labs/lab-06-cron-audit"
+            }
+          ]
+        },
+        {
+          "id": "db-normalization",
+          "name": "Normalización",
+          "labs": [
+            {
+              "lab_key": "lab8",
+              "lab_id": "LAB-08",
+              "title": "Pipeline saludable",
+              "difficulty": "Difícil",
+              "order": 3,
+              "repo": "lanedu-labs/lab-08-pipeline"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_key": "lab4",
+          "lab_id": "LAB-04",
+          "title": "Mini API sin servidor",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-labs/lab-04-mock-api"
+        },
+        {
+          "lab_key": "lab7",
+          "lab_id": "LAB-07",
+          "title": "Responder un incidente",
+          "difficulty": "Medio",
+          "order": 2,
+          "repo": "lanedu-labs/lab-07-incident"
+        }
+      ]
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "levels": ["Fácil", "Medio", "Difícil"],
+      "labs": [
+        {
+          "lab_key": "lab5",
+          "lab_id": "LAB-05",
+          "title": "Checklist de despliegue",
+          "difficulty": "Fácil",
+          "order": 1,
+          "repo": "lanedu-labs/lab-05-deploy-checklist"
+        },
+        {
+          "lab_key": "lab9",
+          "lab_id": "LAB-09",
+          "title": "Blue Team vs Ransomware",
+          "difficulty": "Difícil",
+          "order": 2,
+          "repo": "lanedu-labs/lab-09-ransomware"
+        }
+      ]
+    }
+  ]
+}
