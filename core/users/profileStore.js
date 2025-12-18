@@ -2,11 +2,27 @@ import { STORAGE_KEYS, LEGACY_STORAGE_KEYS } from '../../config/constants.js';
 
 const baseProfile = (alias) => ({
   alias,
+  displayName: '',
+  role: '',
+  githubHandle: '',
   githubToken: null,
+  githubTokenMeta: { status: 'disconnected', last4: null, lastValidated: null, lastUsed: null },
   githubUser: null,
   progress: {},
   status: 'new'
 });
+
+function normalizeProfile(profile, alias) {
+  if (!profile) return baseProfile(alias);
+  return {
+    ...baseProfile(profile.alias || alias),
+    ...profile,
+    githubTokenMeta: {
+      ...baseProfile(alias).githubTokenMeta,
+      ...(profile.githubTokenMeta || {})
+    }
+  };
+}
 
 function loadProfiles() {
   return JSON.parse(localStorage.getItem(STORAGE_KEYS.profiles) || '{}');
@@ -22,7 +38,7 @@ export function migrateLegacyProfiles() {
 
   const profiles = loadProfiles();
   const legacyProgress = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEYS.progress) || '{}');
-  const fromLegacy = profiles[legacyAlias] || baseProfile(legacyAlias);
+  const fromLegacy = normalizeProfile(profiles[legacyAlias], legacyAlias);
   fromLegacy.progress = legacyProgress[legacyAlias] || {};
   fromLegacy.githubToken = localStorage.getItem(LEGACY_STORAGE_KEYS.token) || null;
   fromLegacy.githubUser = localStorage.getItem(LEGACY_STORAGE_KEYS.githubUser) || null;
@@ -48,7 +64,11 @@ export function setActiveProfileAlias(alias) {
 }
 
 export function getAllProfiles() {
-  return loadProfiles();
+  const profiles = loadProfiles();
+  Object.keys(profiles).forEach((key) => {
+    profiles[key] = normalizeProfile(profiles[key], key);
+  });
+  return profiles;
 }
 
 export function ensureProfile(alias) {
@@ -56,8 +76,10 @@ export function ensureProfile(alias) {
   const profiles = loadProfiles();
   if (!profiles[alias]) {
     profiles[alias] = baseProfile(alias);
-    persistProfiles(profiles);
+  } else {
+    profiles[alias] = normalizeProfile(profiles[alias], alias);
   }
+  persistProfiles(profiles);
   return profiles[alias];
 }
 
@@ -67,15 +89,17 @@ export function getActiveProfile() {
   const profiles = loadProfiles();
   if (!profiles[alias]) {
     profiles[alias] = baseProfile(alias);
-    persistProfiles(profiles);
+  } else {
+    profiles[alias] = normalizeProfile(profiles[alias], alias);
   }
+  persistProfiles(profiles);
   return profiles[alias];
 }
 
 function updateProfile(alias, updater) {
   if (!alias) return null;
   const profiles = loadProfiles();
-  const current = profiles[alias] || baseProfile(alias);
+  const current = normalizeProfile(profiles[alias], alias);
   const updated = { ...current, ...updater(current) };
   profiles[alias] = updated;
   persistProfiles(profiles);
@@ -89,15 +113,28 @@ export function updateActiveProfile(updater) {
 }
 
 export function setGithubCredentials(token, username) {
+  const last4 = token ? token.slice(-4) : null;
+  const encoded = token ? btoa(token) : null;
   return updateActiveProfile((profile) => ({
-    githubToken: token,
+    githubToken: encoded,
+    githubTokenMeta: {
+      ...profile.githubTokenMeta,
+      status: token ? 'connected' : 'disconnected',
+      last4,
+      lastValidated: token ? new Date().toISOString() : null,
+      lastUsed: token ? new Date().toISOString() : null
+    },
     githubUser: username || profile.githubUser,
     status: profile.status === 'new' ? 'active' : profile.status
   }));
 }
 
 export function clearGithubCredentials() {
-  return updateActiveProfile((profile) => ({ githubToken: null, githubUser: null }));
+  return updateActiveProfile((profile) => ({
+    githubToken: null,
+    githubUser: null,
+    githubTokenMeta: { status: 'revoked', last4: null, lastValidated: null, lastUsed: null }
+  }));
 }
 
 export function saveProgress(progress) {
@@ -108,6 +145,21 @@ export function recordLabProgress(labId, payload) {
   return updateActiveProfile((profile) => ({
     progress: { ...profile.progress, [labId]: payload },
     status: profile.status || 'active'
+  }));
+}
+
+export function updateIdentity(payload) {
+  return updateActiveProfile((profile) => ({
+    displayName: payload.displayName ?? profile.displayName,
+    role: payload.role ?? profile.role,
+    githubHandle: payload.githubHandle ?? profile.githubHandle,
+    status: profile.status || 'active'
+  }));
+}
+
+export function recordTokenUsage() {
+  return updateActiveProfile((profile) => ({
+    githubTokenMeta: { ...profile.githubTokenMeta, lastUsed: new Date().toISOString(), status: 'connected' }
   }));
 }
 

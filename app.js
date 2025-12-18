@@ -17,7 +17,9 @@ import {
   setGithubCredentials,
   clearGithubCredentials,
   clearActiveProfile,
-  getAllProfiles
+  getAllProfiles,
+  updateIdentity,
+  recordTokenUsage
 } from './core/users/profileStore.js';
 import {
   fetchGithubUser,
@@ -29,18 +31,41 @@ import {
 const labs = labsCatalog;
 const state = {
   currentUser: null,
+  displayName: '',
+  role: '',
+  githubHandle: '',
   currentProfile: null,
   githubToken: null,
   githubUser: null,
+  githubTokenMeta: { status: 'disconnected', last4: null, lastValidated: null, lastUsed: null },
   progress: {},
   selectedLab: null,
   checking: false,
   routes: [],
   selectedRoute: null,
-  routesLoaded: false
+  routesLoaded: false,
+  activeView: 'dashboard'
 };
 
 let pendingVerificationLabId = null;
+
+function decodeStoredToken(stored) {
+  if (!stored) return null;
+  try {
+    return atob(stored);
+  } catch (err) {
+    return stored;
+  }
+}
+
+function formatDate(value) {
+  if (!value) return 'Nunca usado';
+  try {
+    return new Date(value).toLocaleString('es-CL');
+  } catch (e) {
+    return value;
+  }
+}
 
 function getVisualStatus(labId) {
   const progress = state.progress[labId];
@@ -100,9 +125,18 @@ async function loadRoutes() {
 function syncStateWithProfile(profile, alias) {
   state.currentUser = alias;
   state.currentProfile = profile;
+  state.displayName = profile?.displayName || '';
+  state.role = profile?.role || '';
+  state.githubHandle = profile?.githubHandle || '';
   state.progress = profile?.progress || {};
-  state.githubToken = profile?.githubToken || null;
+  state.githubToken = decodeStoredToken(profile?.githubToken) || null;
   state.githubUser = profile?.githubUser || null;
+  state.githubTokenMeta = profile?.githubTokenMeta || {
+    status: 'disconnected',
+    last4: null,
+    lastValidated: null,
+    lastUsed: null
+  };
 }
 
 function loadSession() {
@@ -115,6 +149,7 @@ function loadSession() {
   }
   syncStateWithProfile(profile, activeAlias);
   hideLogin();
+  switchView('dashboard');
   renderAll();
 }
 
@@ -369,7 +404,7 @@ function renderStats() {
   document.getElementById('labs-completed').textContent = Object.values(state.progress).filter(
     (p) => p.status === 'completed'
   ).length;
-  document.getElementById('player-name').textContent = state.currentUser || 'Jugador';
+  document.getElementById('player-name').textContent = state.displayName || state.currentUser || 'Jugador';
   document.getElementById('player-level').textContent = lvl.label;
 }
 
@@ -394,11 +429,118 @@ function renderRanking() {
   });
 }
 
+function showProfileMessage(type, message) {
+  const box = document.getElementById('profile-message');
+  if (!box) return;
+  box.className = `status-box ${type}`;
+  box.textContent = message;
+}
+
+function renderIdentitySection() {
+  const nameInput = document.getElementById('profile-name');
+  if (!nameInput) return;
+  const handleInput = document.getElementById('profile-handle');
+  const roleInput = document.getElementById('profile-role');
+  nameInput.value = state.displayName || state.currentUser || '';
+  handleInput.value = state.githubHandle || state.githubUser || '';
+  roleInput.value = state.role || '';
+
+  const identityStatus = document.getElementById('identity-status');
+  const complete = Boolean(nameInput.value && handleInput.value);
+  identityStatus.textContent = complete ? 'COMPLETO' : 'INCOMPLETO';
+  identityStatus.className = `status-badge ${complete ? 'success' : 'warning'}`;
+}
+
+function renderTechnicalStatus() {
+  const list = document.getElementById('technical-status-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  const statuses = [
+    {
+      label: 'Cuenta GitHub vinculada',
+      ok: Boolean(state.githubHandle || state.githubUser),
+      description: state.githubHandle || state.githubUser || 'Sin username declarado'
+    },
+    {
+      label: 'Token GitHub conectado',
+      ok: Boolean(state.githubToken),
+      description: state.githubToken ? 'Conectado, listo para validar PRs.' : 'Pendiente hasta que un Lab lo requiera.'
+    },
+    {
+      label: 'Permisos del token',
+      ok: state.githubTokenMeta?.status === 'connected',
+      warning: state.githubTokenMeta?.status === 'revoked',
+      description:
+        state.githubTokenMeta?.status === 'connected'
+          ? 'Lectura de repos habilitada.'
+          : 'Conecta un token con permisos de solo lectura a repos.'
+    },
+    {
+      label: 'Rutas desbloqueadas',
+      ok: isRouteZeroComplete(),
+      description: isRouteZeroComplete()
+        ? 'Ruta 0 completada. Puedes avanzar en otras rutas.'
+        : 'Completa Ruta 0 para habilitar el resto de rutas.'
+    }
+  ];
+
+  statuses.forEach((item) => {
+    const badgeClass = item.ok ? 'success' : item.warning ? 'error' : 'warning';
+    const row = document.createElement('div');
+    row.className = 'status-row';
+    row.innerHTML = `
+      <div>
+        <p class="label">${item.label}</p>
+        <p class="mini-hint">${item.description}</p>
+      </div>
+      <span class="status-badge ${badgeClass}">${item.ok ? 'OK' : 'PENDIENTE'}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function renderTokenCard() {
+  const masked = state.githubTokenMeta?.last4 ? `•••• ${state.githubTokenMeta.last4}` : 'Sin token conectado';
+  const tokenStatus = document.getElementById('token-status');
+  const maskNode = document.getElementById('token-mask');
+  if (maskNode) maskNode.textContent = masked;
+  if (tokenStatus) {
+    const cls = state.githubTokenMeta?.status === 'connected' ? 'success' : state.githubTokenMeta?.status === 'revoked' ? 'error' : 'warning';
+    tokenStatus.className = `status-badge ${cls}`;
+    tokenStatus.textContent = state.githubTokenMeta?.status || 'disconnected';
+  }
+
+  const lastValidated = document.getElementById('token-last-validated');
+  const lastUsed = document.getElementById('token-last-used');
+  if (lastValidated) lastValidated.textContent = formatDate(state.githubTokenMeta?.lastValidated);
+  if (lastUsed) lastUsed.textContent = formatDate(state.githubTokenMeta?.lastUsed);
+}
+
+function renderProfileView() {
+  renderIdentitySection();
+  renderTechnicalStatus();
+  renderTokenCard();
+}
+
 function renderAll() {
   renderRoutes();
   renderLabs();
   renderStats();
   renderRanking();
+  renderProfileView();
+}
+
+function switchView(view) {
+  state.activeView = view;
+  const dashboard = document.getElementById('dashboard-view');
+  const profile = document.getElementById('profile-view');
+  const navDashboard = document.getElementById('nav-dashboard');
+  const navProfile = document.getElementById('nav-profile');
+  if (dashboard) dashboard.classList.toggle('hidden', view !== 'dashboard');
+  if (profile) profile.classList.toggle('hidden', view !== 'profile');
+  if (navDashboard) navDashboard.classList.toggle('active', view === 'dashboard');
+  if (navProfile) navProfile.classList.toggle('active', view === 'profile');
 }
 
 function showValidationMessage(type, message) {
@@ -409,7 +551,7 @@ function showValidationMessage(type, message) {
 
 async function validatePullRequest(lab, rules) {
   const prs = await fetchPullRequestsForLab(lab.repo, state.githubToken);
-  const githubLogin = (state.githubUser || state.currentUser || '').toLowerCase();
+  const githubLogin = (state.githubUser || state.githubHandle || state.currentUser || '').toLowerCase();
   const userPRs = prs.filter((pr) => pr.user?.login?.toLowerCase() === githubLogin);
   if (!userPRs.length) {
     return { ok: false, reason: 'No se encontró PR para este Lab.' };
@@ -470,6 +612,11 @@ async function verifyCurrentLab() {
     return showValidationMessage('info', 'Conecta GitHub para validar este Lab con tu PR.');
   }
 
+  if (lab.requiresGithub && state.githubToken) {
+    recordTokenUsage();
+    state.githubTokenMeta = { ...state.githubTokenMeta, lastUsed: new Date().toISOString(), status: 'connected' };
+  }
+
   state.checking = true;
   document.getElementById('verify-btn').disabled = true;
   showValidationMessage('info', 'Consultando GitHub y reglas del Lab...');
@@ -520,8 +667,13 @@ async function handleLogin(event) {
   if (!alias) return;
   const profile = ensureProfile(alias);
   setActiveProfileAlias(alias);
-  syncStateWithProfile(profile, alias);
+  if (!profile.displayName) {
+    updateIdentity({ displayName: alias });
+  }
+  const refreshed = getActiveProfile();
+  syncStateWithProfile(refreshed, alias);
   hideLogin();
+  switchView('dashboard');
   renderAll();
 }
 
@@ -531,9 +683,10 @@ async function handleGithubConnect(event) {
   if (!token) return;
   try {
     const data = await fetchGithubUser(token);
+    const updatedProfile = setGithubCredentials(token, data.login);
     state.githubToken = token;
     state.githubUser = data.login;
-    setGithubCredentials(token, data.login);
+    state.githubTokenMeta = updatedProfile.githubTokenMeta || state.githubTokenMeta;
     hideGithubConnect();
     showValidationMessage('success', 'GitHub conectado. Continúa validando tu Lab.');
     const pendingLab = pendingVerificationLabId;
@@ -546,13 +699,57 @@ async function handleGithubConnect(event) {
   }
 }
 
+async function handleProfileTokenSubmit(event) {
+  event.preventDefault();
+  const token = document.getElementById('profile-token').value.trim();
+  if (!token) return;
+  try {
+    const data = await fetchGithubUser(token);
+    const updatedProfile = setGithubCredentials(token, data.login);
+    state.githubToken = token;
+    state.githubUser = data.login;
+    state.githubTokenMeta = updatedProfile.githubTokenMeta || state.githubTokenMeta;
+    renderProfileView();
+    showProfileMessage('success', 'GitHub conectado. Usaremos solo permisos de lectura para validar PRs.');
+  } catch (error) {
+    showProfileMessage('error', error.message || 'Token inválido o sin permisos.');
+  }
+}
+
+function handleTokenRevoke() {
+  clearGithubCredentials();
+  state.githubToken = null;
+  state.githubUser = null;
+  state.githubTokenMeta = { status: 'revoked', last4: null, lastValidated: null, lastUsed: null };
+  renderProfileView();
+  showProfileMessage('info', 'Acceso revocado. Podrás conectar GitHub cuando un Lab lo requiera.');
+}
+
+function handleIdentitySave(event) {
+  event.preventDefault();
+  const displayName = document.getElementById('profile-name').value.trim();
+  const githubHandle = document.getElementById('profile-handle').value.trim();
+  const role = document.getElementById('profile-role').value.trim();
+  updateIdentity({ displayName, githubHandle, role });
+  state.displayName = displayName || state.currentUser;
+  state.githubHandle = githubHandle;
+  state.role = role;
+  renderProfileView();
+  renderStats();
+  showProfileMessage('success', 'Identidad actualizada.');
+}
+
 function handleLogout() {
   clearGithubCredentials();
   clearActiveProfile();
   state.currentUser = null;
+  state.displayName = '';
+  state.role = '';
+  state.githubHandle = '';
   state.currentProfile = null;
   state.githubToken = null;
   state.githubUser = null;
+  state.githubTokenMeta = { status: 'disconnected', last4: null, lastValidated: null, lastUsed: null };
   state.progress = {};
   showLogin();
 }
@@ -574,6 +771,20 @@ function setupEvents() {
   document.getElementById('logout-btn').addEventListener('click', () => {
     handleLogout();
   });
+
+  const navDashboard = document.getElementById('nav-dashboard');
+  const navProfile = document.getElementById('nav-profile');
+  if (navDashboard) navDashboard.addEventListener('click', () => switchView('dashboard'));
+  if (navProfile) navProfile.addEventListener('click', () => switchView('profile'));
+
+  const identityForm = document.getElementById('identity-form');
+  if (identityForm) identityForm.addEventListener('submit', handleIdentitySave);
+
+  const tokenForm = document.getElementById('profile-token-form');
+  if (tokenForm) tokenForm.addEventListener('submit', handleProfileTokenSubmit);
+
+  const revokeBtn = document.getElementById('revoke-token-btn');
+  if (revokeBtn) revokeBtn.addEventListener('click', handleTokenRevoke);
 }
 
 setupEvents();
