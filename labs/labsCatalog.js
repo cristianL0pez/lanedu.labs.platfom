@@ -147,7 +147,8 @@ export const labsCatalog = [
     'El PR debe estar abierto o mergeado.'
   ],
   deliverable: 'Pull Request válido contra el repo base, cumpliendo las reglas definidas.'
-},
+}
+,
   {
     id: 'lab2',
     labId: 'LAB-02',
