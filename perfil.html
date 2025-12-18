@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil de Usuario | LANEDU Labs</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap');
+    :root {
+      --bg: #000;
+      --panel: #0d1117;
+      --border: #1f2933;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #5be7a9;
+      --accent-2: #4fd1c5;
+      --warn: #fbbf24;
+      --error: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px;
+    }
+    .page {
+      width: min(1100px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    header {
+      background: linear-gradient(135deg, rgba(19, 26, 34, 0.95), rgba(22, 30, 42, 0.85));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+    .brand {
+      font-size: 24px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .subtitle { color: var(--muted); margin: 4px 0 12px; }
+    .description { color: var(--muted); margin: 0; }
+    main { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card h3 { margin: 0; letter-spacing: 0.5px; }
+    label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+    input, textarea {
+      width: 100%;
+      background: #0b0f14;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+    input:focus, textarea:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    button {
+      background: var(--accent);
+      color: #04130d;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+    button:hover { opacity: 0.9; }
+    button.secondary { background: transparent; color: var(--text); border-color: var(--border); }
+    button.ghost { background: #0b0f14; color: var(--muted); border-color: var(--border); }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', 'Inter', monospace;
+      letter-spacing: 0.4px;
+      border: 1px solid var(--border);
+      background: rgba(45, 212, 191, 0.08);
+      color: var(--accent-2);
+    }
+    .status-badge.warn { background: rgba(251, 191, 36, 0.1); color: var(--warn); border-color: rgba(251, 191, 36, 0.4); }
+    .status-badge.error { background: rgba(239, 68, 68, 0.1); color: var(--error); border-color: rgba(239, 68, 68, 0.4); }
+    .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+    .helper { color: var(--muted); font-size: 13px; margin: 0; }
+    .tooltip { border-bottom: 1px dashed var(--muted); cursor: help; }
+    .token-mask { font-family: 'JetBrains Mono', monospace; background: #0b0f14; padding: 8px 10px; border-radius: 8px; border: 1px dashed var(--border); }
+    .muted-title { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+    .pill { display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px; background: rgba(91, 231, 169, 0.1); color: var(--accent); font-family: 'JetBrains Mono', monospace; border: 1px solid rgba(91, 231, 169, 0.5); }
+    .danger { color: var(--error); }
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      background: #0b0f14;
+      color: var(--muted);
+    }
+    .top-actions { display: flex; gap: 12px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+    .back-link { color: var(--accent-2); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="page" id="page">
+    <header>
+      <div class="brand">⚡ LANEDU Labs</div>
+      <h1 class="subtitle">Perfil de Usuario</h1>
+      <p class="description">Gestiona tu identidad técnica y credenciales de validación.</p>
+      <div class="top-actions">
+        <a class="back-link" href="./index.html">← Volver al dashboard</a>
+        <span class="pill" id="profile-alias">perfil: —</span>
+      </div>
+    </header>
+
+    <div id="empty-profile" class="empty-state" style="display:none;">
+      No hay un perfil activo. Crea tu cuenta desde el dashboard para gestionar identidad y tokens.
+      <div style="margin-top:12px;">
+        <a class="back-link" href="./index.html">Ir a Dashboard</a>
+      </div>
+    </div>
+
+    <main id="content" style="display:none;">
+      <section class="card" id="identity-card">
+        <h3>Identidad Técnica</h3>
+        <p class="helper">Estos datos se usan para personalizar tu experiencia. No se comparten fuera de LANEDU.</p>
+        <label for="email">Correo electrónico</label>
+        <input id="email" type="email" placeholder="tu@mail.com" />
+
+        <label for="display-name">Nombre visible</label>
+        <input id="display-name" type="text" placeholder="Tu nombre en la plataforma" />
+
+        <label for="github-handle">Username de GitHub</label>
+        <input id="github-handle" type="text" placeholder="ej: octocat" />
+
+        <label for="github-url">URL del perfil GitHub</label>
+        <input id="github-url" type="url" placeholder="https://github.com/tu-usuario" />
+
+        <label for="role">Rol u objetivo profesional</label>
+        <input id="role" type="text" placeholder="DevOps trainee, Frontend junior, etc." />
+
+        <div class="actions">
+          <button id="save-identity">Guardar cambios</button>
+          <span class="status-badge" id="identity-status">PENDING</span>
+        </div>
+      </section>
+
+      <section class="card" id="user-state-card">
+        <h3>Estado del Usuario</h3>
+        <p class="helper">Checklist informativa. No bloquea tu avance.</p>
+        <div class="status-grid" id="user-status-list"></div>
+      </section>
+
+      <section class="card" id="token-card">
+        <h3>Token de GitHub</h3>
+        <p class="helper">El token se utiliza únicamente para validar repositorios y Pull Requests en Labs avanzados.</p>
+        <label for="token-input">Token (PAT u OAuth)</label>
+        <input id="token-input" type="password" placeholder="ghp_xxxxx" autocomplete="off" />
+        <div class="actions">
+          <button id="save-token">Guardar token</button>
+          <button id="revoke-token" class="ghost">Revocar token</button>
+        </div>
+        <div>
+          <p class="muted-title">Estado</p>
+          <div class="token-mask" id="token-state">Sin token configurado</div>
+        </div>
+      </section>
+
+      <section class="card" id="security-card">
+        <h3>Seguridad y Auditoría</h3>
+        <p class="helper">Visibilidad sobre uso del token. Todo es local y bajo tu control.</p>
+        <div class="meta">Última validación: <span id="last-validation">—</span></div>
+        <div class="meta">Último uso del token: <span id="last-use">—</span></div>
+        <div class="meta">Estado del token: <span id="token-status">desconectado</span></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { getActiveProfile, getActiveProfileAlias, updateIdentity, setGithubCredentials, clearGithubCredentials, recordTokenUsage } from './core/users/profileStore.js';
+    import { loadRoutesCatalog, getRouteLabs } from './routes/routesProvider.js';
+    import { ROUTE_ZERO_ID } from './config/constants.js';
+
+    function decodeToken(stored) {
+      if (!stored) return null;
+      try { return atob(stored); } catch (e) { return stored; }
+    }
+
+    function formatDate(value) {
+      if (!value) return '—';
+      try { return new Date(value).toLocaleString('es-CL'); } catch (e) { return value; }
+    }
+
+    const alias = getActiveProfileAlias();
+    const profile = getActiveProfile();
+    const emptyState = document.getElementById('empty-profile');
+    const content = document.getElementById('content');
+    const aliasPill = document.getElementById('profile-alias');
+
+    if (!alias || !profile) {
+      emptyState.style.display = 'block';
+    } else {
+      content.style.display = 'grid';
+      aliasPill.textContent = `perfil: ${alias}`;
+      hydrateProfile(profile);
+      renderStatus(profile);
+      loadRoutesState(profile);
+      wireInteractions();
+    }
+
+    function hydrateProfile(profile) {
+      document.getElementById('email').value = profile.email || '';
+      document.getElementById('display-name').value = profile.displayName || '';
+      document.getElementById('github-handle').value = profile.githubHandle || '';
+      document.getElementById('github-url').value = profile.githubUser || '';
+      document.getElementById('role').value = profile.role || '';
+      document.getElementById('identity-status').textContent = 'SAVED';
+      renderToken(profile);
+      renderSecurity(profile);
+    }
+
+    function renderToken(profile) {
+      const meta = profile.githubTokenMeta || {};
+      const storedToken = profile.githubToken;
+      const last4 = meta.last4 || (decodeToken(storedToken) ? decodeToken(storedToken).slice(-4) : null);
+      const mask = last4 ? `Token conectado • ****${last4}` : 'Sin token configurado';
+      document.getElementById('token-state').textContent = mask;
+    }
+
+    function renderSecurity(profile) {
+      const meta = profile.githubTokenMeta || {};
+      document.getElementById('last-validation').textContent = formatDate(meta.lastValidated);
+      document.getElementById('last-use').textContent = formatDate(meta.lastUsed);
+      document.getElementById('token-status').textContent = meta.status || 'desconectado';
+    }
+
+    async function loadRoutesState(profile) {
+      try {
+        const routes = await loadRoutesCatalog();
+        const routeZeroLabs = getRouteLabs(ROUTE_ZERO_ID, routes);
+        const completed = routeZeroLabs.filter(({ lab }) => profile.progress?.[lab.id]?.status === 'completed').length;
+        const routeZeroComplete = routeZeroLabs.length > 0 && completed === routeZeroLabs.length;
+        renderStatus(profile, routeZeroComplete);
+      } catch (e) {
+        renderStatus(profile, false);
+      }
+    }
+
+    function badge(label, cls = '') {
+      const span = document.createElement('span');
+      span.className = `status-badge ${cls}`.trim();
+      span.textContent = label;
+      return span;
+    }
+
+    function renderStatus(profile, routeZeroComplete = false) {
+      const statusList = document.getElementById('user-status-list');
+      statusList.innerHTML = '';
+      const githubLinked = profile.githubHandle ? badge('GitHub vinculado: Sí') : badge('GitHub vinculado: No', 'warn');
+      const tokenConnected = (profile.githubTokenMeta?.status === 'connected' && profile.githubTokenMeta?.last4)
+        ? badge('Token configurado: Sí')
+        : badge('Token configurado: No', 'warn');
+      const perms = (profile.githubTokenMeta?.status === 'connected')
+        ? badge('Permisos: Lectura OK')
+        : badge('Permisos: Incompletos', 'warn');
+      const routes = routeZeroComplete
+        ? badge('Rutas desbloqueadas: Ruta 0 completada')
+        : badge('Rutas desbloqueadas: Completa Ruta 0', 'warn');
+      [githubLinked, tokenConnected, perms, routes].forEach((node) => statusList.appendChild(node));
+    }
+
+    function wireInteractions() {
+      document.getElementById('save-identity').addEventListener('click', () => {
+        updateIdentity({
+          email: document.getElementById('email').value.trim(),
+          displayName: document.getElementById('display-name').value.trim(),
+          githubHandle: document.getElementById('github-handle').value.trim(),
+          githubUser: document.getElementById('github-url').value.trim(),
+          role: document.getElementById('role').value.trim()
+        });
+        const updated = getActiveProfile();
+        hydrateProfile(updated);
+        renderStatus(updated);
+      });
+
+      document.querySelectorAll('#email, #display-name, #github-handle, #github-url, #role').forEach((input) => {
+        input.addEventListener('input', () => {
+          document.getElementById('identity-status').textContent = 'PENDING';
+        });
+      });
+
+      document.getElementById('save-token').addEventListener('click', () => {
+        const tokenValue = document.getElementById('token-input').value.trim();
+        if (!tokenValue) return;
+        const profileBefore = getActiveProfile();
+        setGithubCredentials(tokenValue, profileBefore.githubUser || profileBefore.githubHandle || null);
+        const updated = getActiveProfile();
+        document.getElementById('token-input').value = '';
+        document.getElementById('token-state').textContent = `Token conectado • ****${tokenValue.slice(-4)}`;
+        renderSecurity(updated);
+        renderStatus(updated);
+      });
+
+      document.getElementById('revoke-token').addEventListener('click', () => {
+        clearGithubCredentials();
+        const updated = getActiveProfile();
+        document.getElementById('token-state').textContent = 'Token revocado';
+        renderSecurity(updated);
+        renderStatus(updated);
+      });
+    }
+  </script>
+</body>
+</html>
