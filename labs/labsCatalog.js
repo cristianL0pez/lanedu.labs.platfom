@@ -49,7 +49,6 @@ export const labsCatalog = [
       'Entorno local listo para trabajar con Git.',
     manualValidation: true
   },
-
   {
     id: 'gh-lab02',
     labId: 'LAB-02',
@@ -74,7 +73,6 @@ export const labsCatalog = [
     deliverable:
       'Repositorio propio creado y accesible públicamente.'
   },
-
   {
     id: 'gh-lab03',
     labId: 'LAB-03',
@@ -98,7 +96,6 @@ export const labsCatalog = [
     deliverable:
       'Repositorio con historial de commits inicial.'
   },
-
   {
     id: 'gh-lab04',
     labId: 'LAB-04',
@@ -122,7 +119,6 @@ export const labsCatalog = [
     deliverable:
       'Repositorio remoto con commits visibles.'
   },
-
   {
     id: 'gh-lab05',
     labId: 'LAB-05',
@@ -146,7 +142,6 @@ export const labsCatalog = [
     deliverable:
       'Repositorio con rama activa y cambios separados.'
   },
-
   {
     id: 'gh-lab06',
     labId: 'LAB-06',
@@ -170,7 +165,6 @@ export const labsCatalog = [
     deliverable:
       'Fork con cambios listos.'
   },
-
   {
     id: 'gh-lab07',
     labId: 'LAB-07',
@@ -194,7 +188,6 @@ export const labsCatalog = [
     deliverable:
       'Pull Request válido contra el repo base.'
   },
-
   {
     id: 'gh-lab08',
     labId: 'LAB-08',
@@ -224,17 +217,18 @@ export const labsCatalog = [
     title: 'El jefe necesita el archivo YA',
     level: 'Beginner',
     xp: 100,
-    // Ajuste específico para LAB-01: repositorio oficial en lanedu-org
     repo: 'lanedu-org/lanedu-lab-01-backup-logs',
     story:
       'Tu lead te escribió por chat: “necesito un backup limpio de logs antes de las 18:00, el auditor está aquí”.',
-    objective: 'Crear un script que comprima los logs de /var/log (o carpeta simulada) y genere un archivo con fecha.',
+    objective:
+      'Crear un script que comprima los logs de /var/log (o carpeta simulada) y genere un archivo con fecha.',
     rules: [
       'No borres archivos originales.',
       'Incluye comandos o snippets que usaste.',
       'Adjunta evidencia (capturas o salida del comando).'
     ],
-    deliverable: 'Crea un Pull Request contra el repo base con el script de backup.'
+    deliverable:
+      'Crea un Pull Request contra el repo base con el script de backup.'
   },
   {
     id: 'lab2',
@@ -243,14 +237,17 @@ export const labsCatalog = [
     level: 'Beginner',
     xp: 120,
     repo: 'lanedu-labs/lab-02-history-review',
-    story: 'Llegas a una máquina con historial caótico. Quieren saber qué comandos se ejecutaron para un incidente.',
-    objective: 'Analizar el historial (.bash_history o similar) y resumir en un reporte qué comandos sospechosos encontraste.',
+    story:
+      'Llegas a una máquina con historial caótico. Quieren saber qué comandos se ejecutaron para un incidente.',
+    objective:
+      'Analizar el historial (.bash_history o similar) y resumir en un reporte qué comandos sospechosos encontraste.',
     rules: [
       'No edites el historial original.',
       'Incluye timestamps si están disponibles.',
       'Entrega un resumen de 5-10 líneas.'
     ],
-    deliverable: 'Pull Request con tu reporte y comandos en el repo base.'
+    deliverable:
+      'Pull Request con tu reporte y comandos en el repo base.'
   },
   {
     id: 'lab3',
@@ -259,14 +256,17 @@ export const labsCatalog = [
     level: 'Beginner',
     xp: 130,
     repo: 'lanedu-labs/lab-03-onboarding',
-    story: 'Un compañero nuevo llega y no hay manual. Necesita ambiente listo en 10 minutos.',
-    objective: 'Crear un script que instale dependencias (ej. git, curl), configure alias y muestre mensaje de bienvenida.',
+    story:
+      'Un compañero nuevo llega y no hay manual. Necesita ambiente listo en 10 minutos.',
+    objective:
+      'Crear un script que instale dependencias (ej. git, curl), configure alias y muestre mensaje de bienvenida.',
     rules: [
       'Debe ser idempotente (si ya está instalado, no rompe).',
       'Usa variables y comentarios claros.',
       'Incluye pasos para revertir cambios.'
     ],
-    deliverable: 'Pull Request con el script y evidencias en el repo base.'
+    deliverable:
+      'Pull Request con el script y evidencias en el repo base.'
   },
   {
     id: 'lab4',
@@ -275,14 +275,17 @@ export const labsCatalog = [
     level: 'Beginner',
     xp: 140,
     repo: 'lanedu-labs/lab-04-mock-api',
-    story: 'Te piden simular una API interna para probar un frontend mientras llega el backend real.',
-    objective: 'Crear un mock de API con JSON local (puede ser usando fetch a un archivo) y responder datos de usuarios.',
+    story:
+      'Te piden simular una API interna para probar un frontend mientras llega el backend real.',
+    objective:
+      'Crear un mock de API con JSON local (puede ser usando fetch a un archivo) y responder datos de usuarios.',
     rules: [
       'No necesitas servidor; usa archivos o funciones.',
       'Debe permitir filtrar o buscar usuarios.',
       'Incluye ejemplo de consumo en JS.'
     ],
-    deliverable: 'Pull Request con el mock y la demo listos.'
+    deliverable:
+      'Pull Request con el mock y la demo listos.'
   },
   {
     id: 'lab5',
@@ -291,14 +294,17 @@ export const labsCatalog = [
     level: 'Beginner',
     xp: 150,
     repo: 'lanedu-labs/lab-05-deploy-checklist',
-    story: 'Antes de desplegar, tu squad necesita una checklist que evite sustos.',
-    objective: 'Construir una checklist interactiva (HTML/JS) que marque tareas y calcule porcentaje.',
+    story:
+      'Antes de desplegar, tu squad necesita una checklist que evite sustos.',
+    objective:
+      'Construir una checklist interactiva (HTML/JS) que marque tareas y calcule porcentaje.',
     rules: [
       'Debe persistir estado localmente.',
       'Incluye al menos 8 ítems críticos.',
       'Muestra un resumen visual (barra o texto).'
     ],
-    deliverable: 'Pull Request con la checklist funcional en el repo base.'
+    deliverable:
+      'Pull Request con la checklist funcional en el repo base.'
   },
   {
     id: 'lab6',
@@ -307,14 +313,17 @@ export const labsCatalog = [
     level: 'Intermediate',
     xp: 200,
     repo: 'lanedu-labs/lab-06-cron-audit',
-    story: 'La empresa perdió trazabilidad de sus cron jobs. Necesitan inventario rápido.',
-    objective: 'Levantar un inventario de cron jobs de un sistema (real o simulado) y proponer alertas básicas.',
+    story:
+      'La empresa perdió trazabilidad de sus cron jobs. Necesitan inventario rápido.',
+    objective:
+      'Levantar un inventario de cron jobs de un sistema (real o simulado) y proponer alertas básicas.',
     rules: [
       'Documenta comandos usados para listar crons.',
       'Propón validaciones para saber si fallan.',
       'Entrega tabla con dueño, comando y horario.'
     ],
-    deliverable: 'Pull Request con inventario y propuestas en el repo base.'
+    deliverable:
+      'Pull Request con inventario y propuestas en el repo base.'
   },
   {
     id: 'lab7',
@@ -325,13 +334,15 @@ export const labsCatalog = [
     repo: 'lanedu-labs/lab-07-incident',
     story:
       'Alguien subió una llave SSH pública no autorizada. Debes reaccionar como responderías en guardia.',
-    objective: 'Diseñar y documentar un playbook de respuesta: detección, contención, erradicación y recuperación.',
+    objective:
+      'Diseñar y documentar un playbook de respuesta: detección, contención, erradicación y recuperación.',
     rules: [
       'Incluye comandos concretos de verificación.',
       'Define responsables y tiempos estimados.',
       'Agrega checklist de verificación final.'
     ],
-    deliverable: 'Pull Request con el playbook y evidencias.'
+    deliverable:
+      'Pull Request con el playbook y evidencias.'
   },
   {
     id: 'lab8',
@@ -340,14 +351,17 @@ export const labsCatalog = [
     level: 'Intermediate',
     xp: 240,
     repo: 'lanedu-labs/lab-08-pipeline',
-    story: 'El pipeline CI falla sin logs claros. Debes estabilizarlo antes de la demo.',
-    objective: 'Crear un pipeline mínimo (o simulado) con pasos de build, test y notificaciones, y registrar logs legibles.',
+    story:
+      'El pipeline CI falla sin logs claros. Debes estabilizarlo antes de la demo.',
+    objective:
+      'Crear un pipeline mínimo (o simulado) con pasos de build, test y notificaciones, y registrar logs legibles.',
     rules: [
       'Muestra variables de entorno sensibles como secretos (no en claro).',
       'Incluye al menos una prueba automatizada falsa o real.',
       'Entrega un tablero de estado o reporte de runs.'
     ],
-    deliverable: 'Pull Request con pipeline, logs y reporte.'
+    deliverable:
+      'Pull Request con pipeline, logs y reporte.'
   },
   {
     id: 'lab9',
@@ -356,12 +370,16 @@ export const labsCatalog = [
     level: 'Advanced',
     xp: 400,
     repo: 'lanedu-labs/lab-09-ransomware',
-    story: 'Un servidor muestra actividad de cifrado masivo. Necesitas actuar como analista SOC.',
-    objective: 'Diseñar un kit de contención rápida: checklist, scripts de aislamiento y plan de comunicación.',
+    story:
+      'Un servidor muestra actividad de cifrado masivo. Necesitas actuar como analista SOC.',
+    objective:
+      'Diseñar un kit de contención rápida: checklist, scripts de aislamiento y plan de comunicación.',
     rules: [
       'Prioriza pasos de contención en < 15 minutos.',
       'Incluye scripts o comandos listos para ejecutar.',
       'Agrega indicadores para monitorear propagación.'
     ],
-    deliverable: 'Pull Request con el kit de respuesta y documentación.'
-  }]
+    deliverable:
+      'Pull Request con el kit de respuesta y documentación.'
+  }
+];
