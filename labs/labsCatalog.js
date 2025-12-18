@@ -27,16 +27,19 @@ export const labsCatalog = [
   xp: 60,
   repo: 'lanedu-org/lanedu-lab-01-create-repo',
   story:
-    'Con tu cuenta lista, Roberto vuelve a hablar contigo. “Vamos a crear tu espacio de trabajo”, te explica. Te pide que inicies un repositorio desde cero, como lo haría cualquier miembro del equipo. No es solo crear un repo: es demostrar que sabes iniciar un proyecto con orden, documentación y responsabilidad.',
+    'Con tu cuenta lista, Roberto vuelve a hablar contigo. “Vamos a crear tu espacio de trabajo”, te explica mientras revisa el tablero del equipo. En ACME Tech cada proyecto comienza igual: un repositorio bien creado, con documentación mínima y reglas claras desde el primer día. Este repo no es un ejercicio, será tu base de trabajo durante el onboarding. Aquí demuestras si sabes iniciar un proyecto con orden, criterio y responsabilidad profesional.',
   objective:
-    'Crear un repositorio público preparado para trabajo real, con documentación inicial, licencia y un primer commit limpio.',
+    'Crear un repositorio público en tu cuenta de GitHub, preparado para trabajo real, con nombre definido, documentación inicial, licencia y un primer commit limpio.',
   rules: [
-    'Incluye README.md con propósito del repo.',
-    'Agrega LICENSE.',
-    'Crea al menos un commit inicial.',
-    'Entrega se valida con Pull Request.'
+    'El repositorio debe ser público.',
+    'El nombre del repositorio debe seguir el formato indicado por el Lab.',
+    'Incluye README.md con el propósito del repositorio.',
+    'Agrega un archivo LICENSE.',
+    'Crea al menos un commit inicial realizado por ti.',
+    'Este Lab no se valida mediante Pull Request.'
   ],
-  deliverable: 'Pull Request hacia el repo base con el repositorio inicial listo.'
+  deliverable:
+    'La URL del repositorio creado en tu cuenta de GitHub, con los archivos y commits visibles públicamente.'
 },
 {
   id: 'gh-lab2',
