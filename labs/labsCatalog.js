@@ -1,137 +1,114 @@
 export const labsCatalog = [
   {
-  id: 'gh-lab0',
-  labId: 'LAB-00',
-  title: 'Crear cuenta GitHub',
-  level: 'Beginner',
-  xp: 40,
-  repo: 'lanedu-org/lanedu-lab-00-github-account',
-  story:
-    'Es tu primer día en **ACME Tech**. Aún no has escrito una sola línea de código cuando Roberto, tu jefe técnico, te detiene en el onboarding. “Antes de tocar cualquier repo, necesitamos que existas como profesional”, te dice. En esta empresa todo vive en GitHub: tareas, revisiones, historial y decisiones. Tu identidad digital es tu primera herramienta de trabajo.',
-  objective:
-    'Crear una cuenta de GitHub lista para un entorno profesional: usuario definido, foto, bio clara y autenticación en dos pasos habilitada.',
-  rules: [
-    'Habilita 2FA en tu cuenta.',
-    'Configura un perfil claro (bio, nombre visible).',
-    'Captura tu URL de perfil para validación.',
-    'Este Lab puede marcarse manualmente como completado.'
-  ],
-  deliverable: 'Completa la configuración de tu cuenta. Presiona “Verificar progreso” para marcarlo manualmente.',
-  manualValidation: true
-},
-{
-  id: 'gh-lab1',
-  labId: 'LAB-01',
-  title: 'Crear un repositorio',
-  level: 'Beginner',
-  xp: 60,
-  repo: 'lanedu-org/lanedu-lab-01-create-repo',
-  story:
-    'Con tu cuenta lista, Roberto vuelve a hablar contigo. “Vamos a crear tu espacio de trabajo”, te explica mientras revisa el tablero del equipo. En ACME Tech cada proyecto comienza igual: un repositorio bien creado, con documentación mínima y reglas claras desde el primer día. Este repo no es un ejercicio, será tu base de trabajo durante el onboarding. Aquí demuestras si sabes iniciar un proyecto con orden, criterio y responsabilidad profesional.',
-  objective:
-    'Crear un repositorio público en tu cuenta de GitHub, preparado para trabajo real, con nombre definido, documentación inicial, licencia y un primer commit limpio.',
-  rules: [
-    'El repositorio debe ser público.',
-    'El nombre del repositorio debe seguir el formato indicado por el Lab.',
-    'Incluye README.md con el propósito del repositorio.',
-    'Agrega un archivo LICENSE.',
-    'Crea al menos un commit inicial realizado por ti.',
-    'Este Lab no se valida mediante Pull Request.'
-  ],
-  deliverable:
-    'La URL del repositorio creado en tu cuenta de GitHub, con los archivos y commits visibles públicamente.'
-},
-{
-  id: 'gh-lab2',
-  labId: 'LAB-02',
-  title: 'Clonar y modificar un repositorio',
-  level: 'Beginner',
-  xp: 60,
-  repo: 'lanedu-org/lanedu-lab-02-clone-edit',
-  story:
-    'Al día siguiente, Roberto te asigna tu primera tarea real. “Este repo ya existe, alguien más lo creó. Tu trabajo es continuarlo sin romper nada”, te dice. Debes clonar el repositorio, entender su estructura y proponer un cambio mínimo, como lo harías en cualquier equipo profesional.',
-  objective:
-    'Clonar un repositorio, crear una rama de trabajo, modificar un archivo y preparar los cambios para revisión.',
-  rules: [
-    'Incluye instrucciones reproducibles en el README.',
-    'Crea al menos un cambio visible.',
-    'Entrega mediante PR.'
-  ],
-  deliverable: 'Pull Request con los cambios aplicados y documentados.'
-},
-{
-  id: 'gh-lab3',
-  labId: 'LAB-03',
-  title: 'Commits con sentido',
-  level: 'Beginner',
-  xp: 70,
-  repo: 'lanedu-org/lanedu-lab-03-meaningful-commits',
-  story:
-    'Tras revisar tu PR, Roberto deja un comentario: “El cambio está bien, pero tus commits dicen poco”. En ACME Tech el historial importa. Cada commit debe contar qué hiciste y por qué. Ahora debes demostrar que entiendes cómo escribir commits que otros puedan leer y entender meses después.',
-  objective:
-    'Realizar commits atómicos y bien escritos, siguiendo convenciones profesionales.',
-  rules: [
-    'Usa mensajes descriptivos (ej. feat:, fix:, chore:).',
-    'Agrupa cambios coherentes en commits separados.',
-    'Incluye un log de cambios en el PR.'
-  ],
-  deliverable: 'Pull Request con commits claros y revisión lista.'
-},
-{
-  id: 'gh-lab4',
-  labId: 'LAB-04',
-  title: 'Push al repositorio remoto',
-  level: 'Beginner',
-  xp: 70,
-  repo: 'lanedu-org/lanedu-lab-04-push-remote',
-  story:
-    'Ya trabajaste localmente y tus commits están listos, pero Roberto te recuerda algo clave: “Si no está en el remoto, no existe”. Tu tarea ahora es empujar correctamente tus cambios, asegurarte de que la rama esté bien publicada y lista para revisión del equipo.',
-  objective:
-    'Configurar el remoto, hacer push correctamente y dejar una rama lista para revisión.',
-  rules: [
-    'Incluye screenshot o log del push.',
-    'Asegura que la rama remota esté limpia.',
-    'Entrega mediante PR.'
-  ],
-  deliverable: 'Pull Request demostrando que el push y la rama remota están correctos.'
-},
-{
-  id: 'gh-lab5',
-  labId: 'LAB-05',
-  title: 'Fork de un repositorio',
-  level: 'Beginner',
-  xp: 80,
-  repo: 'lanedu-org/lanedu-lab-05-fork',
-  story:
-    'Ahora el desafío cambia. Roberto te asigna colaborar en un proyecto que no pertenece directamente al equipo. “Aquí no tienes permisos directos”, te explica. “Trabajamos con forks y upstreams, como en open source”. Debes seguir el flujo completo sin romper la sincronización.',
-  objective:
-    'Crear un fork, sincronizarlo con el repositorio original y preparar cambios desde tu copia.',
-  rules: [
-    'Configura remoto upstream.',
-    'Documenta cómo sincronizas con upstream.',
-    'Entrega mediante PR desde tu fork.'
-  ],
-  deliverable: 'Pull Request desde tu fork al repo base con cambios mínimos.'
-},
-{
-  id: 'gh-lab6',
-  labId: 'LAB-06',
-  title: 'Crear un Pull Request válido',
-  level: 'Beginner',
-  xp: 100,
-  repo: 'lanedu-org/lanedu-lab-06-pr-valid',
-  story:
-    'Última prueba del onboarding. Roberto te dice: “Este PR será evaluado como si fuera producción”. Todo cuenta: el título, la descripción, la checklist y los archivos modificados. Si apruebas este paso, quedas oficialmente habilitado para trabajar como parte del equipo.',
-  objective:
-    'Abrir un Pull Request completo y válido, siguiendo todas las reglas definidas por el equipo.',
-  rules: [
-    'Incluye plantilla de PR rellenada.',
-    'Modifica al menos los archivos requeridos definidos en rules.json.',
-    'El PR debe estar abierto o mergeado.'
-  ],
-  deliverable: 'Pull Request válido contra el repo base, cumpliendo las reglas definidas.'
-}
-,
+    id: 'gh-lab0',
+    labId: 'LAB-00',
+    title: 'Crear cuenta GitHub',
+    level: 'Beginner',
+    xp: 40,
+    repo: 'lanedu-org/lanedu-lab-00-github-account',
+    story:
+      'Antes de cualquier pipeline o PR, necesitas tu identidad. Abre tu cuenta, configura 2FA y deja listo tu perfil.',
+    objective:
+      'Crear una cuenta de GitHub lista para trabajo real: usuario, foto, bio profesional y autenticación en dos pasos.',
+    rules: [
+      'Habilita 2FA en tu cuenta.',
+      'Configura un perfil claro (bio, nombre visible).',
+      'Captura tu URL de perfil para validación.',
+      'Este Lab puede marcarse manualmente como completado.'
+    ],
+    deliverable: 'Completa la configuración de tu cuenta. Presiona “Verificar progreso” para marcarlo manualmente.',
+    manualValidation: true
+  },
+  {
+    id: 'gh-lab1',
+    labId: 'LAB-01',
+    title: 'Crear un repositorio',
+    level: 'Beginner',
+    xp: 60,
+    repo: 'lanedu-org/lanedu-lab-01-create-repo',
+    story: 'Primera misión: crear tu repo base de trabajo para todo lo que viene.',
+    objective: 'Crear un repositorio público con README y licencia, y preparar un primer commit.',
+    rules: [
+      'Incluye README.md con propósito del repo.',
+      'Agrega LICENSE.',
+      'Crea al menos un commit inicial.',
+      'Entrega se valida con Pull Request.'
+    ],
+    deliverable: 'Pull Request hacia el repo base con el repositorio inicial listo.'
+  },
+  {
+    id: 'gh-lab2',
+    labId: 'LAB-02',
+    title: 'Clonar y modificar un repositorio',
+    level: 'Beginner',
+    xp: 60,
+    repo: 'lanedu-org/lanedu-lab-02-clone-edit',
+    story: 'Recibes un repo ya creado. Debes clonarlo, hacer cambios mínimos y proponerlos.',
+    objective: 'Clonar un repo, crear rama, modificar un archivo y preparar cambios para PR.',
+    rules: ['Incluye instrucciones reproducibles en el README.', 'Crea al menos un cambio visible.', 'Entrega mediante PR.'],
+    deliverable: 'Pull Request con los cambios aplicados y documentados.'
+  },
+  {
+    id: 'gh-lab3',
+    labId: 'LAB-03',
+    title: 'Commits con sentido',
+    level: 'Beginner',
+    xp: 70,
+    repo: 'lanedu-org/lanedu-lab-03-meaningful-commits',
+    story: 'Tu lead exige mensajes de commit claros. Debes demostrar disciplina de versionado.',
+    objective: 'Realizar commits atómicos con mensajes tipo convencional, incluyendo contexto.',
+    rules: [
+      'Usa mensajes descriptivos (ej. feat:, fix:, chore:).',
+      'Agrupa cambios coherentes en commits separados.',
+      'Incluye un log de cambios en el PR.'
+    ],
+    deliverable: 'Pull Request con commits claros y revisión lista.'
+  },
+  {
+    id: 'gh-lab4',
+    labId: 'LAB-04',
+    title: 'Push al repositorio remoto',
+    level: 'Beginner',
+    xp: 70,
+    repo: 'lanedu-org/lanedu-lab-04-push-remote',
+    story: 'Tienes cambios locales listos. Debes empujarlos correctamente al remoto sin romper nada.',
+    objective: 'Configurar remoto, hacer push y dejar un PR preparado con la rama publicada.',
+    rules: ['Incluye screenshot o log del push.', 'Asegura que la rama remota esté limpia.', 'Entrega mediante PR.'],
+    deliverable: 'Pull Request demostrando que el push y la rama remota están correctos.'
+  },
+  {
+    id: 'gh-lab5',
+    labId: 'LAB-05',
+    title: 'Fork de un repositorio',
+    level: 'Beginner',
+    xp: 80,
+    repo: 'lanedu-org/lanedu-lab-05-fork',
+    story: 'Debes colaborar en un repo que no es tuyo. Practica el flujo completo con fork.',
+    objective: 'Crear un fork, sincronizar con upstream y preparar cambios en tu copia.',
+    rules: [
+      'Configura remoto upstream.',
+      'Documenta cómo sincronizas con upstream.',
+      'Entrega mediante PR desde tu fork.'
+    ],
+    deliverable: 'Pull Request desde tu fork al repo base con cambios mínimos.'
+  },
+  {
+    id: 'gh-lab6',
+    labId: 'LAB-06',
+    title: 'Crear un Pull Request válido',
+    level: 'Beginner',
+    xp: 100,
+    repo: 'lanedu-org/lanedu-lab-06-pr-valid',
+    story:
+      'Debes abrir tu primer PR real siguiendo buenas prácticas: descripción, checklist y archivos requeridos.',
+    objective: 'Abrir un PR con título correcto, checklist y cambios mínimos exigidos.',
+    rules: [
+      'Incluye plantilla de PR rellenada.',
+      'Modifica al menos los archivos requeridos definidos en rules.json.',
+      'El PR debe estar abierto o mergeado.'
+    ],
+    deliverable: 'Pull Request válido contra el repo base, cumpliendo las reglas definidas.'
+  },
   {
     id: 'lab1',
     labId: 'LAB-01',

@@ -42,6 +42,15 @@ const state = {
 
 let pendingVerificationLabId = null;
 
+function getVisualStatus(labId) {
+  const progress = state.progress[labId];
+  if (progress?.status === 'completed') return { label: 'COMPLETED', cls: 'completed' };
+  if (progress?.status === 'checking') return { label: 'IN REVIEW', cls: 'review' };
+  const unlocked = isUnlocked(labId);
+  if (unlocked) return { label: 'AVAILABLE', cls: 'available' };
+  return { label: 'LOCKED', cls: 'locked' };
+}
+
 function isRouteZeroComplete() {
   const progress = getRouteProgress(ROUTE_ZERO_ID);
   return progress.total > 0 && progress.completed === progress.total;
@@ -144,11 +153,18 @@ function getCurrentRouteLabs() {
 }
 
 function getLabStatus(labId) {
-  const progress = state.progress[labId];
-  if (!progress) return 'Pendiente';
-  if (progress.status === 'completed') return 'Completado';
-  if (progress.status === 'checking') return 'En revisión';
-  return progress.status || 'Pendiente';
+  return getVisualStatus(labId).label;
+}
+
+function updateDetailStatus(labId) {
+  const status = getVisualStatus(labId);
+  const statusNode = document.getElementById('lab-status');
+  if (statusNode) statusNode.textContent = status.label;
+  const chip = document.getElementById('lab-status-chip');
+  if (chip) {
+    chip.textContent = status.label;
+    chip.className = `status-flag ${status.cls}`;
+  }
 }
 
 function renderRoutes() {
@@ -266,15 +282,16 @@ function renderLabs() {
 
     const completed = state.progress[lab.id]?.status === 'completed';
     const unlocked = isUnlocked(lab.id);
+    const status = getVisualStatus(lab.id);
     const card = document.createElement('div');
     card.className = `lab-card ${unlocked ? '' : 'locked'}`;
     card.innerHTML = `
       <div class="lab-meta">
         <span class="tag ${lab.level.toLowerCase()}">${meta.difficulty || lab.level}</span>
-        <span class="pill">${lab.xp} XP</span>
+        <span class="status-flag ${status.cls}">${status.label}</span>
       </div>
       <h3>${lab.labId} · ${lab.title}</h3>
-      <p class="mini-hint">${completed ? 'Completado' : unlocked ? 'Disponible' : 'Bloqueado'} · Orden ${meta.order || '-'}</p>
+      <p class="mini-hint">${status.label} · ${lab.xp} XP · Orden ${meta.order || '-'}</p>
     `;
     if (unlocked) {
       card.addEventListener('click', () => selectLab(lab.id));
@@ -293,13 +310,8 @@ function selectLab(id) {
   if (!lab) return;
   state.selectedLab = lab.id;
   const unlocked = isUnlocked(lab.id);
-  const completed = state.progress[lab.id]?.status === 'completed';
   document.getElementById('lab-title').textContent = `${lab.labId} · ${lab.title}`;
-  document.getElementById('lab-status').textContent = completed
-    ? 'Completado'
-    : unlocked
-    ? 'Disponible'
-    : 'Bloqueado';
+  updateDetailStatus(lab.id);
   document.getElementById('lab-story').textContent = lab.story;
   document.getElementById('lab-objective').textContent = lab.objective;
   document.getElementById('lab-deliverable').textContent = lab.deliverable;
@@ -311,9 +323,6 @@ function selectLab(id) {
     rulesList.appendChild(li);
   });
   document.getElementById('verify-btn').disabled = !unlocked || state.checking;
-  const chip = document.getElementById('lab-status-chip');
-  chip.textContent = getLabStatus(lab.id);
-  chip.classList.toggle('pill', true);
   const validationBox = document.getElementById('validation-message');
   validationBox.className = 'status-box hidden';
   validationBox.textContent = '';
@@ -428,7 +437,7 @@ async function verifyCurrentLab() {
     saveProgress();
     renderAll();
     showValidationMessage('success', 'Ruta 0 · Progreso marcado manualmente.');
-    document.getElementById('lab-status-chip').textContent = 'Completado';
+    updateDetailStatus(lab.id);
     return;
   }
 
@@ -444,7 +453,7 @@ async function verifyCurrentLab() {
   state.progress[lab.id] = { status: 'checking' };
   saveProgress();
   renderStats();
-  document.getElementById('lab-status-chip').textContent = 'En revisión';
+  updateDetailStatus(lab.id);
 
   try {
     const rules = await fetchRulesDefinition(lab.repo);
@@ -460,14 +469,14 @@ async function verifyCurrentLab() {
       saveProgress();
       renderAll();
       showValidationMessage('success', '¡PR válido! Lab completado y XP acreditado.');
-      document.getElementById('lab-status-chip').textContent = 'Completado';
+      updateDetailStatus(lab.id);
     } else {
       state.progress[lab.id] = { status: 'pending' };
       recordLabProgress(lab.id, state.progress[lab.id]);
       saveProgress();
       renderStats();
       showValidationMessage('error', validation.reason);
-      document.getElementById('lab-status-chip').textContent = 'Pendiente';
+      updateDetailStatus(lab.id);
     }
   } catch (err) {
     state.progress[lab.id] = { status: 'pending' };
@@ -475,7 +484,7 @@ async function verifyCurrentLab() {
     saveProgress();
     renderStats();
     showValidationMessage('error', err.message || 'Error al verificar PR');
-    document.getElementById('lab-status-chip').textContent = 'Pendiente';
+    updateDetailStatus(lab.id);
   } finally {
     state.checking = false;
     document.getElementById('verify-btn').disabled = false;
