@@ -25,7 +25,11 @@ import {
   fetchGithubUser,
   fetchRulesDefinition,
   fetchPullRequestsForLab,
-  fetchFilesForPR
+  fetchFilesForPR,
+  fetchRepoMetadata,
+  fetchRepoFile,
+  fetchCommits,
+  fetchBranches
 } from './core/auth/githubAuth.js';
 
 const labs = labsCatalog;
@@ -74,6 +78,23 @@ function getVisualStatus(labId) {
   const unlocked = isUnlocked(labId);
   if (unlocked) return { label: 'AVAILABLE', cls: 'available' };
   return { label: 'LOCKED', cls: 'locked' };
+}
+
+function getValidationDescriptor(lab) {
+  const descriptor = lab.validation || {};
+  const fallbackType = descriptor.type || lab.validationType || (lab.repo ? 'pull-request' : 'manual');
+  const requiresToken =
+    descriptor.requiresToken !== undefined
+      ? descriptor.requiresToken
+      : lab.requiresGithub !== undefined
+      ? lab.requiresGithub
+      : false;
+  return {
+    type: fallbackType,
+    requiresToken,
+    criteria: descriptor.criteria || descriptor.rules || descriptor.validationRules || {},
+    exclusions: descriptor.exclusions || lab.validationExclusions || []
+  };
 }
 
 function isRouteZeroComplete() {
@@ -349,7 +370,9 @@ function selectLab(id) {
   updateDetailStatus(lab.id);
   document.getElementById('lab-story').textContent = lab.story;
   document.getElementById('lab-objective').textContent = lab.objective;
-  document.getElementById('lab-validation-type').textContent = lab.validationType || 'Validación por PR';
+  const validationDescriptor = getValidationDescriptor(lab);
+  document.getElementById('lab-validation-type').textContent =
+    validationDescriptor.type || lab.validationType || 'Validación por PR';
   const checksList = document.getElementById('lab-validation-checks');
   checksList.innerHTML = '';
   (lab.validationChecks || []).forEach((item) => {
@@ -359,7 +382,8 @@ function selectLab(id) {
   });
   const exclusionsList = document.getElementById('lab-validation-exclusions');
   exclusionsList.innerHTML = '';
-  (lab.validationExclusions || []).forEach((item) => {
+  const exclusions = validationDescriptor.exclusions || lab.validationExclusions || [];
+  exclusions.forEach((item) => {
     const li = document.createElement('li');
     li.textContent = item;
     exclusionsList.appendChild(li);
@@ -377,12 +401,13 @@ function selectLab(id) {
   validationBox.className = 'status-box hidden';
   validationBox.textContent = '';
   const validationHint = document.getElementById('validation-hint');
-  if (lab.manualValidation) {
-    validationHint.textContent = 'Validación manual o declarativa. No necesitas conectar GitHub para este lab.';
-  } else if (lab.requiresGithub) {
-    validationHint.textContent = 'Este lab se valida con tu PR y rules.json. Conecta GitHub solo cuando vayas a verificar.';
+  if (validationDescriptor.type === 'manual') {
+    validationHint.textContent = 'Validación manual declarada. No necesitas conectar GitHub para este lab.';
+  } else if (validationDescriptor.requiresToken) {
+    validationHint.textContent =
+      'Este lab puede requerir token GitHub para validación automática. Conéctalo solo al verificar.';
   } else {
-    validationHint.textContent = 'La validación depende del lab; sigue las instrucciones y marca tu progreso.';
+    validationHint.textContent = 'Validación automática según el tipo del Lab. Sigue las reglas y valida cuando estés listo.';
   }
 }
 
@@ -549,16 +574,124 @@ function showValidationMessage(type, message) {
   box.textContent = message;
 }
 
-async function validatePullRequest(lab, rules) {
-  const prs = await fetchPullRequestsForLab(lab.repo, state.githubToken);
+function ensureGithubHandle() {
+  const handle = state.githubHandle || state.githubUser || '';
+  if (!handle) throw new Error('Configura tu username de GitHub en tu Perfil antes de validar.');
+  return handle;
+}
+
+function resolveUserRepoFullName(lab, criteria = {}) {
+  const owner = ensureGithubHandle();
+  const repoName = criteria.expectedRepoName || criteria.repoName || (lab.repo ? lab.repo.split('/')[1] : null);
+  if (!repoName) throw new Error('No se pudo determinar el repositorio objetivo. Declara un nombre en el lab.');
+  return `${owner}/${repoName}`;
+}
+
+async function validateProfileData(criteria = {}) {
+  const required = criteria.requiredFields || [];
+  const missing = required.filter((field) => !state[field] || !state[field].trim());
+  if (missing.length) {
+    return { ok: false, reason: `Faltan campos en el Perfil: ${missing.join(', ')}` };
+  }
+  return { ok: true };
+}
+
+async function validateRepoAndFiles(lab, validation) {
+  const targetRepo = resolveUserRepoFullName(lab, validation.criteria);
+  await fetchRepoMetadata(targetRepo, validation.requiresToken ? state.githubToken : null);
+  const requiredFiles = validation.criteria.requiredFiles || [];
+  for (const file of requiredFiles) {
+    try {
+      await fetchRepoFile(targetRepo, file, validation.requiresToken ? state.githubToken : null);
+    } catch (err) {
+      return { ok: false, reason: `Falta el archivo requerido: ${file}` };
+    }
+  }
+  return { ok: true };
+}
+
+async function validateCommitHistory(lab, validation) {
+  const targetRepo = resolveUserRepoFullName(lab, validation.criteria);
+  const commits = await fetchCommits(
+    targetRepo,
+    { per_page: 20 },
+    validation.requiresToken ? state.githubToken : null
+  );
+  if (!Array.isArray(commits) || commits.length < (validation.criteria.minCommits || 2)) {
+    return { ok: false, reason: 'No hay commits suficientes para validar el historial.' };
+  }
+  if (validation.criteria.messagePattern) {
+    const regex = new RegExp(validation.criteria.messagePattern);
+    const invalid = commits.find((c) => !regex.test(c.commit?.message || ''));
+    if (invalid) {
+      return { ok: false, reason: 'Los mensajes de commit no siguen el patrón requerido.' };
+    }
+  }
+  return { ok: true };
+}
+
+async function validatePushActivity(lab, validation) {
+  const targetRepo = resolveUserRepoFullName(lab, validation.criteria);
+  const progressEntry = state.progress[lab.id] || {};
+  if (!progressEntry.startedAt) {
+    progressEntry.startedAt = new Date().toISOString();
+    state.progress[lab.id] = { ...progressEntry, status: progressEntry.status || 'checking' };
+    saveProgress();
+  }
+  const commits = await fetchCommits(
+    targetRepo,
+    { per_page: 1 },
+    validation.requiresToken ? state.githubToken : null
+  );
+  const latest = commits[0];
+  if (!latest) return { ok: false, reason: 'No se encontraron commits recientes.' };
+  const pushedAt = new Date(latest.commit?.author?.date || latest.commit?.committer?.date || latest.committer?.date);
+  if (Number.isNaN(pushedAt.getTime())) return { ok: false, reason: 'No se pudo leer la fecha del último push.' };
+  const started = new Date(progressEntry.startedAt);
+  if (pushedAt <= started) {
+    return { ok: false, reason: 'El último push es anterior al inicio del Lab. Genera un nuevo push.' };
+  }
+  return { ok: true };
+}
+
+async function validateBranchWorkflow(lab, validation) {
+  const targetRepo = resolveUserRepoFullName(lab, validation.criteria);
+  const branches = await fetchBranches(targetRepo, validation.requiresToken ? state.githubToken : null);
+  const secondary = branches.find((b) => b.name !== 'main' && b.name !== 'master');
+  if (!secondary) return { ok: false, reason: 'No se encontró una rama distinta a main/master.' };
+  if (validation.criteria.requiresMerge) {
+    const commits = await fetchCommits(
+      targetRepo,
+      { per_page: 1, sha: secondary.name },
+      validation.requiresToken ? state.githubToken : null
+    );
+    if (!commits.length) return { ok: false, reason: 'La rama secundaria no tiene commits visibles.' };
+  }
+  return { ok: true };
+}
+
+async function validateForkWorkflow(lab, validation) {
+  const targetRepo = resolveUserRepoFullName(lab, validation.criteria);
+  const metadata = await fetchRepoMetadata(targetRepo, validation.requiresToken ? state.githubToken : null);
+  if (!metadata.fork) return { ok: false, reason: 'El repositorio no es un fork.' };
+  if (validation.criteria.parentRepo && metadata.parent?.full_name !== validation.criteria.parentRepo) {
+    return { ok: false, reason: 'El fork no apunta al upstream esperado.' };
+  }
+  return { ok: true };
+}
+
+async function validatePullRequestWithRules(lab, validation, rules) {
+  const token = validation.requiresToken ? state.githubToken : null;
+  const prs = await fetchPullRequestsForLab(lab.repo, token);
   const githubLogin = (state.githubUser || state.githubHandle || state.currentUser || '').toLowerCase();
   const userPRs = prs.filter((pr) => pr.user?.login?.toLowerCase() === githubLogin);
   if (!userPRs.length) {
     return { ok: false, reason: 'No se encontró PR para este Lab.' };
   }
 
+  const titleRule = validation.criteria.titleIncludes || rules.pr_title_contains || lab.labId;
   const matchingPR = userPRs.find((pr) => {
-    const titleMatch = pr.title.toUpperCase().includes((rules.pr_title_contains || lab.labId).toUpperCase());
+    const titleMatch = pr.title.toUpperCase().includes(titleRule.toUpperCase());
     const statusOk = pr.state === 'open' || pr.merged_at;
     return titleMatch && statusOk;
   });
@@ -570,20 +703,52 @@ async function validatePullRequest(lab, rules) {
     };
   }
 
-  const files = await fetchFilesForPR(lab.repo, matchingPR.number, state.githubToken);
+  const files = await fetchFilesForPR(lab.repo, matchingPR.number, token);
   const filenames = files.map((f) => f.filename);
 
-  const missingRequired = (rules.required_files || []).filter((req) => !filenames.includes(req));
+  const requiredFiles = validation.criteria.requiredFiles || rules.required_files || [];
+  const missingRequired = requiredFiles.filter((req) => !filenames.includes(req));
   if (missingRequired.length) {
     return { ok: false, reason: 'No se modificaron archivos requeridos: ' + missingRequired.join(', ') };
   }
 
-  const minChanged = rules.min_changed_files || 1;
+  const minChanged = validation.criteria.minChanged || rules.min_changed_files || 1;
   if (filenames.length < minChanged) {
     return { ok: false, reason: `Se esperaban al menos ${minChanged} archivos modificados.` };
   }
 
   return { ok: true, pr: matchingPR };
+}
+
+async function runValidationForLab(lab) {
+  const validation = getValidationDescriptor(lab);
+  switch (validation.type) {
+    case 'manual':
+      return { ok: true };
+    case 'profile-check':
+      return validateProfileData(validation.criteria);
+    case 'repo-existence':
+    case 'file-existence':
+      return validateRepoAndFiles(lab, validation);
+    case 'commit-history':
+      return validateCommitHistory(lab, validation);
+    case 'push':
+      return validatePushActivity(lab, validation);
+    case 'branch':
+      return validateBranchWorkflow(lab, validation);
+    case 'fork':
+      return validateForkWorkflow(lab, validation);
+    case 'pull-request': {
+      const rules = await fetchRulesDefinition(lab.repo);
+      return validatePullRequestWithRules(lab, validation, rules);
+    }
+    case 'automatic': {
+      const rules = await fetchRulesDefinition(lab.repo);
+      return validatePullRequestWithRules(lab, validation, rules);
+    }
+    default:
+      return { ok: false, reason: 'Tipo de validación no soportado para este Lab.' };
+  }
 }
 
 async function verifyCurrentLab() {
@@ -592,7 +757,9 @@ async function verifyCurrentLab() {
   const unlocked = isUnlocked(lab.id);
   if (!unlocked) return alert('Este lab está bloqueado. Completa el anterior.');
 
-  if (lab.manualValidation) {
+  const validation = getValidationDescriptor(lab);
+
+  if (validation.type === 'manual') {
     recordLabProgress(lab.id, {
       status: 'completed',
       completedAt: new Date().toISOString(),
@@ -606,46 +773,45 @@ async function verifyCurrentLab() {
     return;
   }
 
-  if (lab.requiresGithub && !state.githubToken) {
+  if (validation.requiresToken && !state.githubToken) {
     pendingVerificationLabId = lab.id;
     showGithubConnect();
     return showValidationMessage('info', 'Conecta GitHub para validar este Lab con tu PR.');
   }
 
-  if (lab.requiresGithub && state.githubToken) {
+  if (validation.requiresToken && state.githubToken) {
     recordTokenUsage();
     state.githubTokenMeta = { ...state.githubTokenMeta, lastUsed: new Date().toISOString(), status: 'connected' };
   }
 
   state.checking = true;
   document.getElementById('verify-btn').disabled = true;
-  showValidationMessage('info', 'Consultando GitHub y reglas del Lab...');
+  showValidationMessage('info', 'Ejecutando validación automática del Lab...');
   state.progress[lab.id] = { status: 'checking' };
   saveProgress();
   renderStats();
   updateDetailStatus(lab.id);
 
   try {
-    const rules = await fetchRulesDefinition(lab.repo);
-    const validation = await validatePullRequest(lab, rules);
-    if (validation.ok) {
+    const result = await runValidationForLab(lab);
+    if (result.ok) {
       state.progress[lab.id] = {
         status: 'completed',
-        prNumber: validation.pr.number,
-        prUrl: validation.pr.html_url,
+        prNumber: result.pr?.number,
+        prUrl: result.pr?.html_url,
         completedAt: new Date().toISOString()
       };
       recordLabProgress(lab.id, state.progress[lab.id]);
       saveProgress();
       renderAll();
-      showValidationMessage('success', '¡PR válido! Lab completado y XP acreditado.');
+      showValidationMessage('success', 'Validación exitosa. Lab completado y XP acreditado.');
       updateDetailStatus(lab.id);
     } else {
       state.progress[lab.id] = { status: 'pending' };
       recordLabProgress(lab.id, state.progress[lab.id]);
       saveProgress();
       renderStats();
-      showValidationMessage('error', validation.reason);
+      showValidationMessage('error', result.reason || 'No se pudo validar el Lab.');
       updateDetailStatus(lab.id);
     }
   } catch (err) {

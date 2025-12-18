@@ -9,6 +9,12 @@ export const labsCatalog = [
     story: `Es tu primer día en ACME Tech. Llegas con el pase temporal y Roberto, tu jefe técnico, te recuerda que sin identidad clara no hay acceso a los repos ni a las salas de incidentes. Necesitan saber quién eres antes de asignarte tareas: una cuenta de GitHub con 2FA, foto profesional y bio con tu enfoque. No se revisa código aquí; se valida que puedas pararte frente al equipo como alguien confiable. Imagina que luego usarán tu cuenta para asignarte tickets, revisar PRs y darte permisos. Si fallas, seguirás como visitante, sin teclado dedicado ni onboarding real. Tómalo como la puerta de entrada a una empresa que exige orden desde el minuto uno.`,
     objective:
       'Abrir una cuenta de GitHub con 2FA, foto profesional y bio que indique tu rol objetivo. Deja la URL lista.',
+    validation: {
+      type: 'manual',
+      requiresToken: false,
+      criteria: { checklist: ['Cuenta activa', '2FA habilitado', 'Bio y foto listas'] },
+      exclusions: ['No se revisa código ni PR.']
+    },
     validationType: 'manual',
     validationRules: { type: 'manual', checklist: ['Cuenta activa', '2FA habilitado', 'Bio y foto listas'] },
     validationChecks: [
@@ -22,8 +28,7 @@ export const labsCatalog = [
       'Habilita 2FA antes de continuar.',
       'Este Lab se marca manualmente (sin token).'
     ],
-    deliverable: 'Checklist completado y perfil listo. Marca manualmente cuando esté completo.',
-    manualValidation: true
+    deliverable: 'Checklist completado y perfil listo. Marca manualmente cuando esté completo.'
   },
   {
     id: 'gh-lab1',
@@ -34,6 +39,12 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-01-create-repo',
     story: `Roberto te presenta al equipo por chat corporativo. Antes de darte acceso a las máquinas de staging, te pide completar tu ficha interna: nombre visible, objetivo profesional y cómo encontrarte en GitHub. El equipo de SRE y seguridad automatiza permisos leyendo estos datos; si están incompletos, tu usuario queda en modo “solo lectura” y no podrás avanzar a las siguientes rutas. En ACME Tech, mostrar tu objetivo (Frontend, DevOps, Data) ayuda a asignarte pares de apoyo y labs relevantes. Esta tarea simula ese paso formal: actualizar tu perfil para que las herramientas internas sepan quién eres sin pedirte el token todavía.`,
     objective: 'Completar tu perfil interno con nombre visible, username/URL GitHub y rol u objetivo.',
+    validation: {
+      type: 'profile-check',
+      requiresToken: false,
+      criteria: { requiredFields: ['displayName', 'githubHandle', 'githubUrl', 'role'] },
+      exclusions: ['No se valida PR ni repos aún.']
+    },
     validationType: 'profile-check',
     validationRules: { type: 'profile-check', requiredFields: ['displayName', 'githubHandle'] },
     validationChecks: ['Nombre y GitHub configurados en el perfil.', 'Rol u objetivo declarado.', 'Sin token obligatorio.'],
@@ -43,8 +54,7 @@ export const labsCatalog = [
       'Declara un rol/objetivo claro para asignaciones.',
       'No se solicita token en este paso.'
     ],
-    deliverable: 'Guarda la identidad en la página de Perfil y marca el Lab.',
-    manualValidation: true
+    deliverable: 'Guarda la identidad en la página de Perfil y marca el Lab.'
   },
   {
     id: 'gh-lab2',
@@ -55,13 +65,18 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-02-commits-locales',
     story: `A media mañana, Roberto te asigna tu primer entregable real: un repositorio que usarás para experimentos internos. La empresa requiere que cada repo tenga README y LICENSE antes de permitir integraciones o pipelines. No es opcional; los auditores preguntan por propiedad y propósito. Te explica que, aunque este repo es tuyo, servirá como referencia para tu madurez: nombre profesional, primer commit con mensaje comprensible y estructura mínima. En entornos corporativos, la prolijidad inicial reduce deuda futura y evita tickets de seguridad. Este lab emula esa expectativa: crea tu propio repo con orden y déjalo listo para futuras tareas.`,
     objective: 'Crear un repositorio público con nombre profesional, README y LICENSE con commit inicial.',
+    validation: {
+      type: 'repo-existence',
+      requiresToken: false,
+      criteria: { expectedRepoName: 'lanedu-onboarding', requiredFiles: ['README.md', 'LICENSE'] },
+      exclusions: ['No se valida PR ni token.']
+    },
     validationType: 'repo-existence',
     validationRules: { type: 'repo-existence', requires: ['README.md', 'LICENSE'] },
     validationChecks: ['Repo creado con README y LICENSE.', 'Commit inicial visible.', 'Nombre profesional.'],
     validationExclusions: ['No se valida PR ni token.'],
     rules: ['Incluye propósito en README.', 'Primer commit con mensaje claro.', 'Sin PR todavía.'],
-    deliverable: 'Repo propio listo y documentado. Marca el lab cuando exista.',
-    manualValidation: true
+    deliverable: 'Repo propio listo y documentado. Marca el lab cuando exista.'
   },
   {
     id: 'gh-lab3',
@@ -72,13 +87,18 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-03-primer-push',
     story: `El equipo de plataforma comparte un checklist de higiene mínima: todo repo productivo debe tener README, LICENSE y un .gitignore que proteja secretos y archivos temporales. Roberto te envía un mensaje: “Antes de tocar pipelines, demuestra que sabes cuidar la casa”. Quiere ver que configuras un .gitignore acorde al stack, documentas dependencias y organizas tu repo para que otro dev pueda clonar y entender en minutos. No hay PR aún, pero sí criterio profesional: evitar subir basura, explicar qué hace el proyecto y dejar instrucciones rápidas. Este paso simula la revisión silenciosa que hace el equipo de seguridad sobre cualquier repo nuevo.`,
     objective: 'Agregar .gitignore, reforzar README con instrucciones y mantener LICENSE en tu repo personal.',
-    validationType: 'file-existence',
-    validationRules: { type: 'file-existence', requiredFiles: ['README.md', 'LICENSE', '.gitignore'] },
+    validation: {
+      type: 'commit-history',
+      requiresToken: false,
+      criteria: { expectedRepoName: 'lanedu-onboarding', minCommits: 2, messagePattern: '^(feat|fix|chore):' },
+      exclusions: ['No se revisa contenido de código.']
+    },
+    validationType: 'commit-history',
+    validationRules: { type: 'commit-history', minCommits: 2 },
     validationChecks: ['.gitignore alineado a tu stack.', 'README con instrucciones de uso.', 'LICENSE vigente.'],
     validationExclusions: ['No se revisa contenido de código.'],
     rules: ['Documenta por qué elegiste ese .gitignore.', 'Incluye comandos de instalación rápidos.', 'Validación manual.'],
-    deliverable: 'Repo personal con archivos base listos. Marca manualmente el avance.',
-    manualValidation: true
+    deliverable: 'Repo personal con archivos base listos. Marca manualmente el avance.'
   },
   {
     id: 'gh-lab4',
@@ -89,13 +109,18 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-04-branches',
     story: `Roberto revisa tu historial y quiere ver disciplina. En ACME Tech, cada commit debe contar una historia pequeña y reversible. Te asigna mejorar un README y agregar un script corto, pero con commits atómicos, mensajes en formato imperativo y sin ruido. También te pide capturas de git log --oneline para probar que entendiste. El objetivo es demostrar que puedes trabajar localmente sin depender de CI, manteniendo el repo limpio y con mensajes que cualquier revisor entienda en segundos. Este paso prepara tu mente para flujos de revisión reales donde los mensajes de commit son evidencia auditada.`,
     objective: 'Generar 3 commits atómicos y legibles en tu repo personal con mensajes claros.',
-    validationType: 'commit-history',
-    validationRules: { type: 'commit-history', minCommits: 3 },
+    validation: {
+      type: 'push',
+      requiresToken: false,
+      criteria: { expectedRepoName: 'lanedu-onboarding', requireBranch: true },
+      exclusions: ['No se exige PR ni revisión de CI.']
+    },
+    validationType: 'push',
+    validationRules: { type: 'push', requireBranch: true },
     validationChecks: ['Commits atómicos y en imperativo.', 'Historial limpio sin revert innecesario.', 'README actualizado.'],
     validationExclusions: ['No se exige push ni PR.'],
     rules: ['Guarda evidencia de git log.', 'Mensajes sin emojis ni ruido.', 'Validación manual.'],
-    deliverable: 'Historial local documentado. Marca el lab al completar el checklist.',
-    manualValidation: true
+    deliverable: 'Historial local documentado. Marca el lab al completar el checklist.'
   },
   {
     id: 'gh-lab5',
@@ -106,13 +131,18 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-05-fork-upstream',
     story: `ACME Tech habilitará tu acceso a un remoto compartido. Antes, Roberto te pide demostrar que puedes hacer push sin romper main. Debes configurar origin, crear una rama feature y subirla, dejando trazabilidad del comando y resultados. Imagina que estás en guardia nocturna y no puedes fallar: el push debe ser reproducible, sin archivos enormes, y con notas claras para quien revisa. Este ejercicio es la antesala a colaborar con otros; si no puedes empujar código limpio, no te asignarán incidentes críticos.`,
     objective: 'Configurar remoto, crear rama de feature y hacer push exitoso con evidencia.',
-    validationType: 'push',
-    validationRules: { type: 'push', requireBranch: true },
+    validation: {
+      type: 'branch',
+      requiresToken: false,
+      criteria: { expectedRepoName: 'lanedu-onboarding', requiresMerge: true },
+      exclusions: ['No se revisa CI ni PR.']
+    },
+    validationType: 'branch',
+    validationRules: { type: 'branch', requiresMerge: true },
     validationChecks: ['Rama remota creada.', 'Push registrado con salida de consola.', 'Sin archivos binarios innecesarios.'],
     validationExclusions: ['No se revisa CI ni PR.'],
     rules: ['Captura el comando de push.', 'Documenta la rama creada.', 'Validación manual.'],
-    deliverable: 'Push documentado en tu repo remoto. Marca el lab manualmente.',
-    manualValidation: true
+    deliverable: 'Push documentado en tu repo remoto. Marca el lab manualmente.'
   },
   {
     id: 'gh-lab6',
@@ -123,13 +153,18 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-06-pr-valid',
     story: `El equipo de features te asigna una tarea pequeña pero sensible: crear una rama, trabajar ahí y mergear de forma limpia, dejando trazabilidad de cómo resolverías un conflicto. Roberto quiere ver que dominas git merge o rebase, que sabes proteger main y que puedes documentar decisiones. En empresas reales, los playbooks de incidentes exigen este tipo de disciplina. En este lab, simulas esa presión: haz la rama, completa el cambio, mergea con limpieza y deja notas de lo que harías si se presentara un conflicto real.`,
     objective: 'Crear una rama de feature, completar cambios y mergear a main con historial claro.',
-    validationType: 'branch',
-    validationRules: { type: 'branch', requiresMerge: true },
+    validation: {
+      type: 'fork',
+      requiresToken: false,
+      criteria: { parentRepo: 'lanedu-org/lanedu-lab-06-pr-valid' },
+      exclusions: ['No se exige PR externo aún.']
+    },
+    validationType: 'fork',
+    validationRules: { type: 'fork', requiresUpstream: true },
     validationChecks: ['Rama de feature creada y mergeada.', 'Historial documentado.', 'Notas de resolución de conflictos.'],
     validationExclusions: ['No se exige PR externo aún.'],
     rules: ['Describe tu flujo en README.', 'Incluye gráfico de git log --graph.', 'Validación manual.'],
-    deliverable: 'Rama mergeada con evidencia y checklist. Marca el lab manualmente.',
-    manualValidation: true
+    deliverable: 'Rama mergeada con evidencia y checklist. Marca el lab manualmente.'
   },
   {
     id: 'gh-lab7',
@@ -140,13 +175,18 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-07-automatic-verify',
     story: `Llega una petición de un repositorio externo crítico. Debes trabajar desde tu fork y mantenerlo sincronizado con upstream para no romper la rama principal del proveedor. Roberto quiere evidencia de que configuraste el remoto upstream, que sabes hacer fetch y rebase/merge sin dejar commits de más y que documentas el flujo para otros juniors. En la empresa, esto evita que los forks se queden obsoletos y que los PR lleguen con sorpresas. Tu misión es preparar ese flujo como si la auditoría pasara mañana.`,
     objective: 'Crear un fork, añadir remoto upstream y sincronizarlo documentando comandos.',
-    validationType: 'fork',
-    validationRules: { type: 'fork', requiresUpstream: true },
+    validation: {
+      type: 'pull-request',
+      requiresToken: true,
+      criteria: { titleIncludes: 'LAB-07', requiredFiles: ['README.md'] },
+      exclusions: ['No se valida calidad de código ni CI.']
+    },
+    validationType: 'pull-request',
+    validationRules: { type: 'pull-request', titleIncludes: 'LAB-07', requiredFiles: ['README.md'] },
     validationChecks: ['Fork en tu cuenta.', 'Upstream configurado y sincronizado.', 'Comandos documentados.'],
     validationExclusions: ['No se exige PR todavía.'],
     rules: ['Incluye comandos para fetch/merge.', 'Demuestra que tu fork está alineado.', 'Validación manual.'],
-    deliverable: 'Fork sincronizado con upstream. Marca manualmente el avance.',
-    manualValidation: true
+    deliverable: 'Fork sincronizado con upstream. Marca manualmente el avance.'
   },
   {
     id: 'gh-lab8',
@@ -157,13 +197,18 @@ export const labsCatalog = [
     repo: 'lanedu-org/lanedu-lab-08-pr-collab',
     story: `Roberto por fin te deja abrir un PR real contra un repo de ACME Tech. Quiere que demuestres el ritual completo: rama limpia, checklist de PR, título con identificador del lab y cambios mínimos que toquen los archivos correctos. Todavía no te pide token; asume que puedes abrir el PR manualmente y dejar la URL visible. La meta es entrenarte en la etiqueta de colaboración antes de pasar a automatizaciones. Si tu PR es claro, el equipo confiará en ti para incidentes nocturnos. Si es caótico, te devolverán a simulaciones.`,
     objective: 'Abrir un PR válido con título del lab y archivos requeridos modificados.',
+    validation: {
+      type: 'pull-request',
+      requiresToken: false,
+      criteria: { titleIncludes: 'LAB-08', requiredFiles: ['README.md'] },
+      exclusions: ['No se valida calidad de código ni CI.']
+    },
     validationType: 'pull-request',
     validationRules: { type: 'pull-request', titleIncludes: 'LAB-08', requiredFiles: ['README.md'] },
     validationChecks: ['PR abierto/mergeado con título correcto.', 'Archivos requeridos tocados.', 'Checklist de PR marcada.'],
     validationExclusions: ['No se valida calidad de código ni CI.'],
     rules: ['Sigue la plantilla de PR.', 'Toca solo archivos requeridos.', 'Token aún no obligatorio.'],
-    deliverable: 'PR abierto y visible. Marca el lab tras completarlo.',
-    manualValidation: true
+    deliverable: 'PR abierto y visible. Marca el lab tras completarlo.'
   },
   {
     id: 'gh-lab9',
@@ -175,6 +220,12 @@ export const labsCatalog = [
     story: `Cierre del onboarding. Roberto te invita a la sala de control para mostrarte el sistema de validación automática de ACME Tech. Aquí ya no basta con decir que hiciste el PR: el sistema leerá rules.json, verificará el título, los archivos modificados y usará tu token para consultar la API. Debes conectar el token desde la nueva página de Perfil, entender que solo se usa para lectura y ejecutar un PR completo. Esta es la prueba final antes de abrirte las demás rutas. Si pasas, el resto del equipo sabe que puedes operar como miembro de guardia en escenarios reales sin que te tomen de la mano.`,
     objective:
       'Conectar tu token desde el Perfil, abrir un PR cumpliendo rules.json y validar automáticamente con el sistema.',
+    validation: {
+      type: 'automatic',
+      requiresToken: true,
+      criteria: { titleIncludes: 'LAB-09', requiredFiles: ['.lanedu/rules.json'] },
+      exclusions: ['No se ejecuta código ni CI.']
+    },
     validationType: 'automatic',
     validationRules: { type: 'automatic', titleIncludes: 'LAB-09', requiredFiles: ['.lanedu/rules.json'] },
     validationChecks: [
