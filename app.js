@@ -775,7 +775,10 @@ function setupEvents() {
   const navDashboard = document.getElementById('nav-dashboard');
   const navProfile = document.getElementById('nav-profile');
   if (navDashboard) navDashboard.addEventListener('click', () => switchView('dashboard'));
-  if (navProfile) navProfile.addEventListener('click', () => switchView('profile'));
+  if (navProfile)
+    navProfile.addEventListener('click', () => {
+      window.location.href = 'perfil.html';
+    });
 
   const identityForm = document.getElementById('identity-form');
   if (identityForm) identityForm.addEventListener('submit', handleIdentitySave);
