@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LANEDU Labs - Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="login-screen" class="overlay">
+    <div class="login-card">
+      <h1>LANEDU Labs</h1>
+      <p class="terminal-line">INITIALIZING SYSTEM…</p>
+      <p class="subtitle">Crea tu perfil interno. Conectar GitHub será necesario solo al validar Labs.</p>
+      <form id="login-form">
+        <label for="player-alias">Nombre de jugador</label>
+        <input
+          type="text"
+          id="player-alias"
+          name="player-alias"
+          placeholder="Tu alias en LANEDU"
+          required
+        />
+        <button type="submit">Entrar a LANEDU</button>
+      </form>
+      <p class="hint">ACCESS GRANTED: Explora y aprende sin fricción. Conectarás GitHub solo cuando verifiques un Pull Request.</p>
+    </div>
+  </div>
+
+  <div id="github-connect" class="overlay hidden">
+    <div class="login-card">
+      <h2>Conectar con GitHub</h2>
+      <p class="subtitle">Solo para validar Labs con Pull Requests. No afecta tu navegación.</p>
+      <form id="github-connect-form">
+        <label for="github-token">Token personal u OAuth</label>
+        <input
+          type="password"
+          id="github-token"
+          name="github-token"
+          placeholder="ghp_xxxxx"
+          required
+        />
+        <button type="submit">Conectar</button>
+        <button type="button" id="cancel-github-connect" class="ghost">Cancelar</button>
+      </form>
+      <p class="mini-hint">Se usa solo para leer tu usuario y PRs. No almacenamos tu código.</p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="logo">⚡ LANEDU Labs</div>
+    <nav class="primary-nav">
+      <button id="nav-dashboard" class="nav-btn active" title="Volver al dashboard">Dashboard</button>
+      <button id="nav-profile" class="nav-btn" title="Gestionar perfil y tokens">Perfil</button>
+    </nav>
+    <div class="player-info">
+      <span id="player-name">Jugador</span>
+      <span class="badge" id="player-level">Nivel 1</span>
+      <button id="logout-btn" class="ghost">Salir</button>
+    </div>
+  </header>
+
+  <main class="layout" id="dashboard-view">
+    <section class="panel routes">
+      <div class="panel-header">
+        <h2>Rutas de aprendizaje</h2>
+        <span class="mini-hint">Ruta 0 obligatoria. Completa la base de GitHub para desbloquear las demás rutas.</span>
+      </div>
+      <div id="routes-list" class="routes-list"></div>
+    </section>
+
+    <section class="panel stats">
+      <h2>Progreso</h2>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <p class="label">XP Total</p>
+          <p class="value" id="xp-total">0</p>
+        </div>
+        <div class="stat-card">
+          <p class="label">Nivel</p>
+          <p class="value" id="level-name">-</p>
+        </div>
+        <div class="stat-card">
+          <p class="label">Labs completados</p>
+          <p class="value" id="labs-completed">0</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel labs">
+      <div class="panel-header space-between">
+        <div>
+          <h2>Labs por ruta</h2>
+          <span class="mini-hint" id="current-route-label">Selecciona una ruta para ver su recorrido.</span>
+        </div>
+        <span class="pill soft" id="route-progress-pill">0% ruta</span>
+      </div>
+      <div id="labs-list" class="labs-list"></div>
+    </section>
+
+    <section class="panel detail">
+      <div class="panel-header">
+        <h2 id="lab-title">Selecciona un lab</h2>
+        <span class="status-flag locked" id="lab-status">LOCKED</span>
+      </div>
+      <div class="lab-content">
+        <p class="label">Historia</p>
+        <p id="lab-story">Elige un lab para ver la narrativa.</p>
+
+        <p class="label">Objetivo</p>
+        <p id="lab-objective">-</p>
+
+        <div class="validation-meta">
+          <div>
+            <p class="label">Tipo de validación</p>
+            <p id="lab-validation-type" class="mini-hint">-</p>
+          </div>
+          <div>
+            <p class="label">Qué se valida</p>
+            <ul id="lab-validation-checks"></ul>
+          </div>
+          <div>
+            <p class="label">Qué no se valida</p>
+            <ul id="lab-validation-exclusions"></ul>
+          </div>
+        </div>
+
+        <p class="label">Reglas</p>
+        <ul id="lab-rules"></ul>
+
+        <p class="label">Entregable</p>
+        <p id="lab-deliverable" class="mini-hint">-</p>
+        <p class="label">Acciones</p>
+        <div class="actions">
+          <button id="verify-btn">Verificar progreso</button>
+          <span id="lab-status-chip" class="status-flag locked">LOCKED</span>
+        </div>
+        <div id="validation-message" class="status-box hidden"></div>
+        <p class="mini-hint" id="validation-hint">La validación depende del tipo de Lab. Conecta GitHub solo cuando un Lab lo requiera.</p>
+      </div>
+    </section>
+
+    <section class="panel ranking">
+      <div class="panel-header">
+        <h2>Ranking local</h2>
+        <span class="mini-hint">Comparte navegador = comparte progreso.</span>
+      </div>
+      <div id="ranking-list" class="ranking-list"></div>
+    </section>
+  </main>
+
+  <section id="profile-view" class="profile-page hidden">
+    <div class="panel-header space-between">
+      <div>
+        <h2>Perfil técnico</h2>
+        <span class="mini-hint">Configura identidad y credenciales sin interrumpir tu avance. “Conectar GitHub será necesario para validar Labs, no para explorar ni aprender.”</span>
+      </div>
+      <span class="status-badge info">Modo configuración</span>
+    </div>
+
+    <div id="profile-message" class="status-box info">No pedimos token de inicio. Úsalo solo cuando un Lab lo requiera.</div>
+
+    <div class="profile-grid">
+      <div class="profile-card">
+        <div class="section-header">
+          <div>
+            <p class="label">A. Identidad del Usuario</p>
+            <p class="mini-hint">Nombre visible, usuario GitHub y tu rol objetivo. Guarda cambios al terminar.</p>
+          </div>
+          <span id="identity-status" class="status-badge warning">INCOMPLETO</span>
+        </div>
+        <form id="identity-form" class="form-grid">
+          <label>Nombre visible
+            <input type="text" id="profile-name" placeholder="Ej: Camila Torres" />
+          </label>
+          <label>Username / URL GitHub
+            <input type="text" id="profile-handle" placeholder="Ej: github.com/camitorres" />
+          </label>
+          <label>Rol u objetivo
+            <input type="text" id="profile-role" placeholder="Ej: DevOps Trainee" />
+          </label>
+          <button type="submit" class="primary">Guardar identidad</button>
+        </form>
+      </div>
+
+      <div class="profile-card">
+        <div class="section-header">
+          <div>
+            <p class="label">B. Estado Técnico del Usuario</p>
+            <p class="mini-hint">Checklist informativo. No bloqueamos acciones: te avisamos cuándo algo falta.</p>
+          </div>
+          <span class="status-badge info">Visibilidad</span>
+        </div>
+        <div id="technical-status-list" class="status-list"></div>
+        <p class="mini-hint">“Completa la Ruta 0 para desbloquear el acceso a las demás rutas. Cada Lab se habilita progresivamente.”</p>
+      </div>
+
+      <div class="profile-card">
+        <div class="section-header">
+          <div>
+            <p class="label">C. Gestión de Token GitHub</p>
+            <p class="mini-hint">Token cifrado en tu perfil, nunca se muestra completo. Solo lectura para validar PRs.</p>
+          </div>
+          <span id="token-status" class="status-badge warning">disconnected</span>
+        </div>
+        <div class="token-mask" id="token-mask">Sin token conectado</div>
+        <form id="profile-token-form" class="form-grid compact">
+          <label>Token personal u OAuth
+            <input type="password" id="profile-token" placeholder="ghp_xxxx" />
+          </label>
+          <div class="token-actions">
+            <button type="submit" class="primary">Conectar / Revalidar token</button>
+            <button type="button" id="revoke-token-btn" class="ghost">Revocar acceso</button>
+          </div>
+        </form>
+        <ul class="token-notes">
+          <li>Este token se utiliza únicamente para validar Pull Requests y repositorios en Labs avanzados.</li>
+          <li>No bloquea tu navegación ni onboarding.</li>
+          <li>Mostramos solo los últimos 4 caracteres.</li>
+        </ul>
+        <div class="meta-grid">
+          <div>
+            <p class="label">Última validación</p>
+            <p id="token-last-validated" class="mini-hint">Nunca usado</p>
+          </div>
+          <div>
+            <p class="label">Último uso</p>
+            <p id="token-last-used" class="mini-hint">Nunca usado</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="section-header">
+          <div>
+            <p class="label">D. Seguridad</p>
+            <p class="mini-hint">Transparencia sobre cuándo y por qué usamos tu token.</p>
+          </div>
+          <span class="status-badge info">Lectura</span>
+        </div>
+        <p class="mini-hint">Cuando un Lab marca “Validación automática”, pediremos el token para leer tu PR y reglas. No ejecutamos código ni escribimos en tus repos.</p>
+        <p class="mini-hint">Estado actual: mostramos advertencias solo si un Lab lo requiere y no tienes token conectado.</p>
+        <p class="mini-hint">Puedes revocar acceso en cualquier momento. Volveremos a solicitarlo cuando sea necesario.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">Diseñado para aprender haciendo. Sin teoría, solo labs. 🛠️</footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
