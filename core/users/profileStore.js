@@ -153,6 +153,7 @@ export function updateIdentity(payload) {
     displayName: payload.displayName ?? profile.displayName,
     role: payload.role ?? profile.role,
     githubHandle: payload.githubHandle ?? profile.githubHandle,
+    githubUser: payload.githubUser ?? profile.githubUser,
     status: profile.status || 'active'
   }));
 }
