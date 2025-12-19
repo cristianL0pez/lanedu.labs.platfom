@@ -89,7 +89,7 @@ export const labsCatalog = [
     title: 'Estructura de archivos base',
     level: 'Beginner',
     xp: 70,
-    repo: 'lanedu-org/lanedu-lab-03-primer-push',
+    repo: 'lanedu-org-lanedu-lab-02-commits-locales',
     story: `El equipo de plataforma comparte un checklist de higiene mínima: todo repo productivo debe tener README, LICENSE y un .gitignore que proteja secretos y archivos temporales. Roberto te envía un mensaje: “Antes de tocar pipelines, demuestra que sabes cuidar la casa”. Quiere ver que configuras un .gitignore acorde al stack, documentas dependencias y organizas tu repo para que otro dev pueda clonar y entender en minutos. No hay PR aún, pero sí criterio profesional: evitar subir basura, explicar qué hace el proyecto y dejar instrucciones rápidas. Este paso simula la revisión silenciosa que hace el equipo de seguridad sobre cualquier repo nuevo.`,
     objective: 'Agregar .gitignore, reforzar README con instrucciones y mantener LICENSE en tu repo personal.',
     validation: {
